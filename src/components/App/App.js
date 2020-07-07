@@ -19,9 +19,14 @@ import InfoPage from '../InfoPage/InfoPage';
 
 import './App.css';
 
+import io from "socket.io-client";
+
 class App extends Component {
   componentDidMount () {
-		this.props.dispatch({type: 'FETCH_USER'})
+		//this.props.dispatch({type: 'FETCH_USER'})
+		const socket = io("http://localhost:5000")
+
+		socket.emit("test");
   }
 
   render() {
