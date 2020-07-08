@@ -10,7 +10,7 @@ class Chat extends React.Component {
           {"Chat lol"}
         </Box>
         <Box height={150} bgcolor="grey.500">
-          Input lol
+          <button onClick={() => this.props.socket.emit('test')}>Test</button>
         </Box>
       </Box>
     );
@@ -21,7 +21,7 @@ class Chat extends React.Component {
 // if you wanted you could write this code like this:
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
-  user: state.user,
+	socket: state.socket
 });
 
 // this allows us to use <App /> in index.js

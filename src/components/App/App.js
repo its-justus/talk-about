@@ -22,11 +22,9 @@ import './App.css';
 import io from "socket.io-client";
 
 class App extends Component {
-  componentDidMount () {
+  componentDidMount = () => {
 		//this.props.dispatch({type: 'FETCH_USER'})
-		const socket = io("http://localhost:5000")
-
-		socket.emit("test");
+		this.props.dispatch({type: 'CONNECT_SOCKET', payload: "TODO:add room here later"})
   }
 
   render() {
@@ -69,4 +67,8 @@ class App extends Component {
   )}
 }
 
-export default connect()(App);
+const mapStateToProps = (state) => {
+	return {socket: state.socket}
+}
+
+export default connect(mapStateToProps)(App);

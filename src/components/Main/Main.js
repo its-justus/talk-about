@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
+import Chat from "../Chat/Chat";
 
 class Main extends React.Component {
   render() {
@@ -13,7 +14,7 @@ class Main extends React.Component {
           </Grid>
 					</Hidden>
           <Grid item name="center-section" xs>
-            center
+            <Chat />
           </Grid>
 					<Hidden xsDown>
           <Grid item name="right-section">
