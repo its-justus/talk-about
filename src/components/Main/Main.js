@@ -5,6 +5,10 @@ import Chat from "../Chat/Chat";
 import MemberList from "../MemberList/MemberList";
 
 class Main extends React.Component {
+	componentDidMount = () => {
+		this.props.start();
+	}
+
   render() {
     return (
       <div>
@@ -37,5 +41,9 @@ const mapStateToProps = (state) => ({
   user: state.user,
 });
 
-// this allows us to use <App /> in index.js
-export default connect(mapStateToProps)(Main);
+// we can map our dispatch to props as well, defining individual dispatch functions
+const mapDispatchToProps = (dispatch) => ({
+	start: () => dispatch({type: "OPEN_SOCKET"})
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

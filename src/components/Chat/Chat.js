@@ -5,27 +5,10 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 class Chat extends React.Component {
   state = {
     count: 0,
-    messages: [],
   };
 
   componentDidMount = () => {
-    const { socket } = this.props;
-    // here we set the socket to listen for relevant messages for this component
-    // listen for the chat counter (just a heartbeat for testing)
-    socket.on("chat.count", (data) =>
-      this.setState({ count: this.state.count + data })
-    );
-
-		// listen for message refresh. we reverse the data so it displays the 
-		// newest message on the bottom
-    socket.on("message.refresh", (data) =>
-      this.setState({ messages: data.reverse() })
-    );
-
-    // listen for new message broadcasts
-    socket.on("message.receive", (data) =>
-      this.setState({ messages: [...this.state.messages, data] })
-    );
+    
   };
 
   sendMessage = (event) => {
