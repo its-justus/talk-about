@@ -18,17 +18,19 @@ function rootSocketHandler(socket, io) {
   socket.on("message.send", (data) => {
     console.log("Message:", data);
     const queryText = `INSERT INTO message (author_id, room_id, text)
-			VALUES ($1, $2, $3);`;
+			VALUES ($1, $2, $3)
+			RETURNING *;`;
     const queryValues = [userId, 1, data];
     pool
       .query(queryText, queryValues)
       .then((result) => {
-        console.log("message saved");
+				console.log("message saved");
+				io.emit("message.receive", result.rows[0]);
       })
       .catch((error) => {
         socket.emit("message.error", "error saving message");
       });
-    io.emit("message.receive", data);
+    
   });
 
   // refresh the user's message stream
