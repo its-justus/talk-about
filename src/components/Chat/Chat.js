@@ -3,16 +3,78 @@ import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
 
 class Chat extends React.Component {
+  state = {
+    count: 0,
+  };
+
+  componentDidMount = () => {
+    // here we set the socket to listen for relevant messages for this component
+    this.props.socket.on("chat.count", (data) =>
+      this.setState({ count: this.state.count + data })
+    );
+	};
+
+  sendMessage = (event) => {
+    console.log("sendMessage");
+    event.preventDefault();
+    this.props.socket.emit("message.new", this.state.messageInput);
+    this.setState({ messageInput: "" });
+  };
+
+	// this is some hacky shit to keep the scroll at the bottom :)
+	scrollToBottom = () => {
+		this.messagesEnd.scrollIntoView({behavior: 'smooth'});
+	}
+
+	componentDidUpdate() {
+		this.scrollToBottom();
+	}
+
   render() {
+    const containerStyle = {
+      height: "400px",
+      overflowY: "scroll",
+      overflowAnchor: "none",
+    };
     return (
-      <Box height="100%" display="flex" bgcolor="grey.100">
-        <Box height="90%" display="flex" bgcolor="grey.300">
-          {"Chat lol"}
-        </Box>
-        <Box height={150} bgcolor="grey.500">
-          <button onClick={() => this.props.socket.emit('test')}>Test</button>
-        </Box>
-      </Box>
+      <div>
+        <Grid container>
+          <Grid item xs={3}>
+            time in chat: {this.state.count * 2 + " seconds" || "~"}
+            <br />
+            {/* Users:
+            {this.state.users.map((cur) => (
+              <p>{cur.name}</p>
+            ))} */}
+            <br />
+          </Grid>
+          <Grid item xs={9}>
+            Messages:
+            <div style={containerStyle}>
+              {/* {this.state.messages.map((cur) => (
+                <p>
+                  {cur.author}: {cur.message}
+                </p>
+              ))} */}
+							{/* the div below is used for anchoring the chat at the bottom */}
+              <div ref={(el) => (this.messagesEnd = el)}></div>
+            </div>
+            <br />
+            <form onSubmit={this.sendMessage}>
+              <input
+                required
+                width="100%"
+                name="messageInput"
+                type="text"
+                value={this.state.messageInput}
+                onChange={(event) =>
+                  this.setState({ messageInput: event.target.value })
+                }
+              />
+            </form>
+          </Grid>
+        </Grid>
+      </div>
     );
   }
 }
@@ -21,7 +83,8 @@ class Chat extends React.Component {
 // if you wanted you could write this code like this:
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
-	socket: state.socket
+  socket: state.socket,
+  user: state.user,
 });
 
 // this allows us to use <App /> in index.js

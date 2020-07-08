@@ -40,5 +40,11 @@ const io = require("socket.io")(app)
 	.on("connection", (socket) => {
 		const userId = socket.request.session.passport.user;
 		console.log(`If this ->${userId} is not undefined, HOLY SHIT IT WORKED`);
+		setInterval(() => {
+			socket.emit("chat.count", 1);
+		}, 2000);
 		socket.on("test", () => console.log("HOLY SHIT IT REALLY WORKS"));
+		socket.on("message.new", (data) => {
+			console.log("Message:", data);
+		})
 	});
