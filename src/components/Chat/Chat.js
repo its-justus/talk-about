@@ -4,24 +4,29 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 
 class Chat extends React.Component {
   state = {
-		count: 0,
-		messages: [],
+    count: 0,
+    messages: [],
   };
 
   componentDidMount = () => {
-		const {socket} = this.props;
+    const { socket } = this.props;
     // here we set the socket to listen for relevant messages for this component
-		// listen for the chat counter (just a heartbeat for testing)
-		socket.on("chat.count", (data) =>
+    // listen for the chat counter (just a heartbeat for testing)
+    socket.on("chat.count", (data) =>
       this.setState({ count: this.state.count + data })
-		);
-		
-		// listen for message refresh
-		socket.on('message.refresh', (data) => this.setState({messages: data}));
+    );
 
-		// listen for new message broadcasts
-		socket.on("message.receive", (data) => this.setState({messages: [...this.state.messages, data]}));
-	};
+		// listen for message refresh. we reverse the data so it displays the 
+		// newest message on the bottom
+    socket.on("message.refresh", (data) =>
+      this.setState({ messages: data.reverse() })
+    );
+
+    // listen for new message broadcasts
+    socket.on("message.receive", (data) =>
+      this.setState({ messages: [...this.state.messages, data] })
+    );
+  };
 
   sendMessage = (event) => {
     console.log("sendMessage");
@@ -30,14 +35,14 @@ class Chat extends React.Component {
     this.setState({ messageInput: "" });
   };
 
-	// // this is some hacky shit to keep the scroll at the bottom :)
-	// scrollToBottom = () => {
-	// 	this.messagesEnd.scrollIntoView({behavior: 'smooth'});
-	// }
+  // // this is some hacky shit to keep the scroll at the bottom :)
+  // scrollToBottom = () => {
+  // 	this.messagesEnd.scrollIntoView({behavior: 'smooth'});
+  // }
 
-	// componentDidUpdate() {
-	// 	this.scrollToBottom();
-	// }
+  // componentDidUpdate() {
+  // 	this.scrollToBottom();
+  // }
 
   render() {
     const containerStyle = {
@@ -65,7 +70,7 @@ class Chat extends React.Component {
                   {cur.author_id}: {cur.text}
                 </p>
               ))}
-							{/* the div below is used for anchoring the chat at the bottom */}
+              {/* the div below is used for anchoring the chat at the bottom */}
               <div ref={(el) => (this.messagesEnd = el)}></div>
             </div>
             <br />

@@ -6,8 +6,8 @@ function rootSocketHandler(socket, io) {
   } // exit if passport session doesn't exist
 
   // grab our user id from the session
-  const userId = socket.request.session.passport.user;
-  console.log(`If this ->${userId} is not undefined, HOLY SHIT IT WORKED`);
+  const {user} = socket.request.session.passport;
+  console.log(`If this ->${user} is not undefined, HOLY SHIT IT WORKED`);
   setInterval(() => {
     socket.emit("chat.count", 1);
   }, 2000);
@@ -20,7 +20,7 @@ function rootSocketHandler(socket, io) {
     const queryText = `INSERT INTO message (author_id, room_id, text)
 			VALUES ($1, $2, $3)
 			RETURNING *;`;
-    const queryValues = [userId, 1, data];
+    const queryValues = [user, 1, data];
     pool
       .query(queryText, queryValues)
       .then((result) => {
@@ -38,12 +38,12 @@ function rootSocketHandler(socket, io) {
     const queryText = `SELECT * FROM message 
 		WHERE room_id = $1
 		ORDER BY created_at DESC
-		LIMIT 2;`;
+		LIMIT 5;`;
     const queryValues = [1];
     pool
       .query(queryText, queryValues)
       .then((result) => {
-        socket.emit("message.refresh", result.rows.reverse());
+        socket.emit("message.refresh", result.rows);
       })
       .catch((error) => {
         console.log("query error", error);
