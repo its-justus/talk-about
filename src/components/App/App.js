@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-  HashRouter as Router,
+  MemoryRouter as Router,
   Route,
   Redirect,
   Switch,
@@ -14,14 +14,17 @@ import Footer from '../Footer/Footer';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
 
 import AboutPage from '../AboutPage/AboutPage';
-import UserPage from '../UserPage/UserPage';
+import Main from '../Main/Main';
 import InfoPage from '../InfoPage/InfoPage';
 
 import './App.css';
 
+import io from "socket.io-client";
+
 class App extends Component {
-  componentDidMount () {
-    this.props.dispatch({type: 'FETCH_USER'})
+  componentDidMount = () => {
+		//this.props.dispatch({type: 'FETCH_USER'})
+		this.props.dispatch({type: 'CONNECT_SOCKET', payload: "TODO:add room here later"})
   }
 
   render() {
@@ -31,7 +34,7 @@ class App extends Component {
           <Nav />
           <Switch>
             {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
-            <Redirect exact from="/" to="/home" />
+            <Redirect exact from="/" to="/main" />
             {/* Visiting localhost:3000/about will show the about page.
             This is a route anyone can see, no login necessary */}
             <Route
@@ -45,8 +48,8 @@ class App extends Component {
             Even though it seems like they are different pages, the user is always on localhost:3000/home */}
             <ProtectedRoute
               exact
-              path="/home"
-              component={UserPage}
+              path="/main"
+              component={Main}
             />
             {/* This works the same as the other protected route, except that if the user is logged in,
             they will see the info page instead. */}
@@ -64,4 +67,8 @@ class App extends Component {
   )}
 }
 
-export default connect()(App);
+const mapStateToProps = (state) => {
+	return {socket: state.socket}
+}
+
+export default connect(mapStateToProps)(App);
