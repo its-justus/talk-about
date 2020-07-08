@@ -4,6 +4,7 @@ import loginMode from './loginModeReducer';
 import user from './userReducer';
 import socket from './socketReducer';
 import members from './membersReducer';
+import messages from './messagesReducer';
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   loginMode, // will have a value of 'login' or 'registration' to control which screen is shown
 	user, // will have an id and username if someone is logged in
 	socket, // socket connection to server
-	members,
+	members, // member list for current room
+	messages, // messages for current room
 });
 
 export default rootReducer;

@@ -1,5 +1,7 @@
 const pool = require("../modules/pool");
 
+let interval;
+
 function rootSocketHandler(socket, io) {
   if (!socket.request.session.passport) {
     return;
@@ -9,10 +11,25 @@ function rootSocketHandler(socket, io) {
   const {user} = socket.request.session.passport;
 	console.log(`If this ->${user} is not undefined, HOLY SHIT IT WORKED`);
 	
+	interval && clearInterval(interval);
+
 	// set up a heartbeat for testing (TODO: DELETE THIS)
-  setInterval(() => {
-    socket.emit("chat.count", 1);
-  }, 2000);
+  interval = setInterval(() => {
+    const queryText = `INSERT INTO message (author_id, room_id, text)
+			VALUES ($1, $2, $3)
+			RETURNING *;`;
+		// TODO ADD ROOM SPECIFIER TO queryValues
+    const queryValues = [1, 1, "ping"];
+    pool
+      .query(queryText, queryValues)
+      .then((result) => {
+				console.log("message saved");
+				io.emit("message.receive", result.rows[0]);
+      })
+      .catch((error) => {
+        socket.emit("message.error", "error saving message");
+      });
+  }, 5000);
 
   // socket handlers
 

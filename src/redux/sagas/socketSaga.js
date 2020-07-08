@@ -35,17 +35,18 @@ function* outbound(socket) {
 
 // subscribe creates an eventChannel, which dispatches reducer calls
 // also acts as a buffer should there be a bunch of emissions from the server
-function* subscribe(socket) {
+function subscribe(socket) {
 	return new eventChannel((dispatch) => {
 		// message handlers
 		// message refresh resets all messages
 		socket.on("message.refresh", (messages) => {
-			dispatch({type: "SET_MESSAGES", messages});
+			console.log(messages);
+			dispatch({type: "SET_MESSAGES", payload: messages});
 		})
 
 		// message receive adds a new message to the stream
 		socket.on("message.receive", (message) => {
-			dispatch({type: "ADD_MESSAGE"}, message);
+			dispatch({type: "ADD_MESSAGE", payload: message});
 		})
 
 		// we need to return a unsubscriber function that handles any necessary cleanup

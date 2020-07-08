@@ -4,24 +4,24 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 
 class MemberList extends React.Component {
   componentDidMount = () => {
-    // pull some things from props
-    const { socket, dispatch, members } = this.props;
+    // // pull some things from props
+    // const { socket, dispatch, members } = this.props;
 
-    // set up our socket events
-    // handle member refresh
-    socket.on("member.refresh", (data) =>
-      dispatch({ type: "SET_MEMBERS", payload: data })
-    );
-    // handle members joining or leaving the chat
-    socket.on("member.joined", (data) =>
-      dispatch({ type: "SET_MEMBERS", payload: data })
-    );
-    socket.on("member.left", (data) =>
-      dispatch({ type: "SET_MEMBERS", payload: data })
-		);
+    // // set up our socket events
+    // // handle member refresh
+    // socket.on("member.refresh", (data) =>
+    //   dispatch({ type: "SET_MEMBERS", payload: data })
+    // );
+    // // handle members joining or leaving the chat
+    // socket.on("member.joined", (data) =>
+    //   dispatch({ type: "SET_MEMBERS", payload: data })
+    // );
+    // socket.on("member.left", (data) =>
+    //   dispatch({ type: "SET_MEMBERS", payload: data })
+		// );
 		
-		// ask the server for our member data
-    socket.emit("member.getAll");
+		// // ask the server for our member data
+    // socket.emit("member.getAll");
   };
 
   render() {

@@ -14,7 +14,7 @@ class Chat extends React.Component {
   sendMessage = (event) => {
     console.log("sendMessage");
     event.preventDefault();
-    this.props.socket.emit("message.send", this.state.messageInput);
+    this.props.dispatch({type:"SEND_MESSAGE", payload: this.state.messageInput});
     this.setState({ messageInput: "" });
   };
 
@@ -48,7 +48,7 @@ class Chat extends React.Component {
           <Grid item xs={9}>
             Messages:
             <div style={containerStyle}>
-              {this.state.messages.map((cur) => (
+              {this.props.messages?.map((cur) => (
                 <p>
                   {cur.author_id}: {cur.text}
                 </p>
@@ -81,7 +81,8 @@ class Chat extends React.Component {
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
   socket: state.socket,
-  user: state.user,
+	user: state.user,
+	messages: state.messages,
 });
 
 // this allows us to use <App /> in index.js
