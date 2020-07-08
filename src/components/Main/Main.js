@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
 import Chat from "../Chat/Chat";
+import MemberList from "../MemberList/MemberList";
 
 class Main extends React.Component {
   render() {
@@ -18,7 +19,9 @@ class Main extends React.Component {
           </Grid>
 					<Hidden xsDown>
           <Grid item name="right-section">
-					<Box width={200}>right box</Box>
+					<Box width={200}>
+						<MemberList />
+					</Box>
           </Grid>
 					</Hidden>
         </Grid>
