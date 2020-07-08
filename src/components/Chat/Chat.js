@@ -4,31 +4,37 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 
 class Chat extends React.Component {
   state = {
-    count: 0,
+		count: 0,
+		messages: [],
   };
 
   componentDidMount = () => {
+		const {socket} = this.props;
     // here we set the socket to listen for relevant messages for this component
-    this.props.socket.on("chat.count", (data) =>
+		// listen for the chat counter (just a heartbeat for testing)
+		socket.on("chat.count", (data) =>
       this.setState({ count: this.state.count + data })
-    );
+		);
+		
+		// listen for new message broadcasts
+		socket.on("message.receive", (data) => this.setState({messages: [...this.state.messages, data]}));
 	};
 
   sendMessage = (event) => {
     console.log("sendMessage");
     event.preventDefault();
-    this.props.socket.emit("message.new", this.state.messageInput);
+    this.props.socket.emit("message.send", this.state.messageInput);
     this.setState({ messageInput: "" });
   };
 
-	// this is some hacky shit to keep the scroll at the bottom :)
-	scrollToBottom = () => {
-		this.messagesEnd.scrollIntoView({behavior: 'smooth'});
-	}
+	// // this is some hacky shit to keep the scroll at the bottom :)
+	// scrollToBottom = () => {
+	// 	this.messagesEnd.scrollIntoView({behavior: 'smooth'});
+	// }
 
-	componentDidUpdate() {
-		this.scrollToBottom();
-	}
+	// componentDidUpdate() {
+	// 	this.scrollToBottom();
+	// }
 
   render() {
     const containerStyle = {
@@ -51,11 +57,11 @@ class Chat extends React.Component {
           <Grid item xs={9}>
             Messages:
             <div style={containerStyle}>
-              {/* {this.state.messages.map((cur) => (
+              {this.state.messages.map((cur) => (
                 <p>
-                  {cur.author}: {cur.message}
+                  {cur}
                 </p>
-              ))} */}
+              ))}
 							{/* the div below is used for anchoring the chat at the bottom */}
               <div ref={(el) => (this.messagesEnd = el)}></div>
             </div>
