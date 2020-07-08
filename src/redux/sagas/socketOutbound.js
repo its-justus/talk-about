@@ -1,9 +1,17 @@
-import {take} from 'redux-saga/effects';
+import {takeEvery} from 'redux-saga/effects';
 // outbound handles emission of sagas over the socket
+
+
+function sendMessage(socket, action) {
+	try {
+    console.log("send message:", action);
+		socket.emit('message.send', action.payload)
+  } catch (error) {
+    console.log('send message error:', error);
+  }
+}
+
+// export our outbound sagas for use in our main socket saga
 export function* outbound(socket) {
-	while(true) {
-		const message = yield take('SEND_MESSAGE');
-		console.log("socket outbound:", message);
-		socket.emit('message.send', message.payload)
-	}
+	yield takeEvery("SEND_MESSAGE", sendMessage, socket);
 }
