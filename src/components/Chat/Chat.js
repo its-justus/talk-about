@@ -4,7 +4,8 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 
 class Chat extends React.Component {
   state = {
-    count: 0,
+		count: 0,
+		messageInput: '',
   };
 
   componentDidMount = () => {

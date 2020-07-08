@@ -28,8 +28,9 @@ function* inbound(socket) {
 // outbound handles emission of sagas over the socket
 function* outbound(socket) {
 	while(true) {
-		const {message} = yield take('SEND_MESSAGE');
-		socket.emit('message.send', message)
+		const message = yield take('SEND_MESSAGE');
+		console.log("socket outbound:", message);
+		socket.emit('message.send', message.payload)
 	}
 }
 

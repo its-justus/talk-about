@@ -29,7 +29,7 @@ function rootSocketHandler(socket, io) {
       .catch((error) => {
         socket.emit("message.error", "error saving message");
       });
-  }, 5000);
+  }, 30000);
 
   // socket handlers
 
