@@ -16,6 +16,9 @@ class Chat extends React.Component {
       this.setState({ count: this.state.count + data })
 		);
 		
+		// listen for message refresh
+		socket.on('message.refresh', (data) => this.setState({messages: data}));
+
 		// listen for new message broadcasts
 		socket.on("message.receive", (data) => this.setState({messages: [...this.state.messages, data]}));
 	};
@@ -59,7 +62,7 @@ class Chat extends React.Component {
             <div style={containerStyle}>
               {this.state.messages.map((cur) => (
                 <p>
-                  {cur}
+                  {cur.author_id}: {cur.text}
                 </p>
               ))}
 							{/* the div below is used for anchoring the chat at the bottom */}
