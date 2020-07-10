@@ -44,7 +44,10 @@ function rootSocketHandler(socket, io) {
       })
       .catch((error) => {
         socket.emit("message.error", "error saving message");
-      });
+			});
+		
+		// set up our disconnect handler
+		socket.on('disconnect')
 	})
 }
 
