@@ -19,7 +19,11 @@ function* loginUser(action) {
     
     // after the user has logged in
     // get the user information from the server
-    yield put({type: 'FETCH_USER'});
+		yield put({type: 'FETCH_USER'});
+		// open our socket connection to the server
+		yield put({type: "OPEN_SOCKET"});
+		// get the message history for the room we are currently in
+		yield put({type: "GET_MESSAGES"});
   } catch (error) {
     console.log('Error with user login:', error);
     if (error.response.status === 401) {
@@ -49,10 +53,13 @@ function* logoutUser(action) {
     // it will end the session
     yield axios.post('/api/user/logout', config);
 
+		// close our socket connection
+		yield put({type: "OPEN_SOCKET"});
+		
     // now that the session has ended on the server
     // remove the client-side user object to let
     // the client-side code know the user is logged out
-    yield put({ type: 'UNSET_USER' });
+		yield put({ type: 'UNSET_USER' });
 
   } catch (error) {
     console.log('Error with user logout:', error);

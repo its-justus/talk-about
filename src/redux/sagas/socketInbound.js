@@ -8,7 +8,7 @@ function socketChannel(socket) {
 		// message refresh resets all messages
 		socket.on("message.refresh", (messages) => {
 			console.log(messages);
-			dispatch({type: "SET_MESSAGES", payload: messages});
+			dispatch({type: "SET_MESSAGES", payload: messages.reverse()});
 		})
 
 		// message receive adds a new message to the stream

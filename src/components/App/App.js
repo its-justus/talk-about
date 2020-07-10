@@ -22,11 +22,6 @@ import './App.css';
 import io from "socket.io-client";
 
 class App extends Component {
-  componentDidMount = () => {
-		//this.props.dispatch({type: 'FETCH_USER'})
-		this.props.dispatch({type: 'CONNECT_SOCKET', payload: "TODO:add room here later"})
-  }
-
   render() {
     return (
       <Router>
@@ -67,8 +62,4 @@ class App extends Component {
   )}
 }
 
-const mapStateToProps = (state) => {
-	return {socket: state.socket}
-}
-
-export default connect(mapStateToProps)(App);
+export default connect()(App);

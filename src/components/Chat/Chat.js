@@ -9,7 +9,7 @@ class Chat extends React.Component {
   };
 
   componentDidMount = () => {
-    
+    this.props.dispatch({type: "GET_MESSAGES", payload: 20});
   };
 
   sendMessage = (event) => {

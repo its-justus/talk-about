@@ -1,59 +1,22 @@
 const pool = require("../modules/pool");
-
-let interval;
+const messageHandler = require("./message.socket");
 
 function rootSocketHandler(socket, io) {
   if (!socket.request.session.passport) {
+		console.log("socket connected with no passport session");
     return;
   } // exit if passport session doesn't exist
 
   // grab our user id from the session
   const {user} = socket.request.session.passport;
-	console.log(`If this ->${user} is not undefined, HOLY SHIT IT WORKED`);
-	
-	interval && clearInterval(interval);
-
-	// set up a heartbeat for testing (TODO: DELETE THIS)
-  interval = setInterval(() => {
-    const queryText = `INSERT INTO message (author_id, room_id, text)
-			VALUES ($1, $2, $3)
-			RETURNING *;`;
-		// TODO ADD ROOM SPECIFIER TO queryValues
-    const queryValues = [1, 1, "ping"];
-    pool
-      .query(queryText, queryValues)
-      .then((result) => {
-				console.log("message saved");
-				io.emit("message.receive", result.rows[0]);
-      })
-      .catch((error) => {
-        socket.emit("message.error", "error saving message");
-      });
-  }, 30000);
+	console.log(`User connected, id: ${user}`);
 
   // socket handlers
-
-	// test handler (TODO: DELETE THIS)
-	socket.on("test", () => console.log("HOLY SHIT IT REALLY WORKS"));
 	
 	// message from user handler
-  socket.on("message.send", (data) => {
-    console.log("Message:", data);
-    const queryText = `INSERT INTO message (author_id, room_id, text)
-			VALUES ($1, $2, $3)
-			RETURNING *;`;
-		// TODO ADD ROOM SPECIFIER TO queryValues
-    const queryValues = [user, 1, data];
-    pool
-      .query(queryText, queryValues)
-      .then((result) => {
-				console.log("message saved");
-				io.emit("message.receive", result.rows[0]);
-      })
-      .catch((error) => {
-        socket.emit("message.error", "error saving message");
-      });
-	});
+	socket.on("message.send", (data) => messageHandler.send(data, socket, io));
+	// user requesting message history
+	socket.on("message.getMessages", (data) => messageHandler.getMessages(data, socket, io));
 
 	// request for member list from user
 	socket.on('member.getAll', (data) => {
@@ -83,24 +46,6 @@ function rootSocketHandler(socket, io) {
         socket.emit("message.error", "error saving message");
       });
 	})
-	
-
-  // refresh the user's message stream
-  setTimeout(() => {
-    const queryText = `SELECT * FROM message 
-		WHERE room_id = $1
-		ORDER BY created_at DESC
-		LIMIT 5;`;
-    const queryValues = [1];
-    pool
-      .query(queryText, queryValues)
-      .then((result) => {
-        socket.emit("message.refresh", result.rows);
-      })
-      .catch((error) => {
-        console.log("query error", error);
-      });
-  }, 2000);
 }
 
 module.exports = rootSocketHandler;
