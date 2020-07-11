@@ -1,4 +1,4 @@
-import {takeEvery} from 'redux-saga/effects';
+import {takeEvery, takeLatest} from 'redux-saga/effects';
 // outbound handles emission of sagas over the socket
 
 // handles sending messages to the server
@@ -22,8 +22,19 @@ function getMessages(socket, action) {
   }
 }
 
+function getMembers(socket, action) {
+	try {
+		console.log("get members:", action);
+		// action.payload is expected to be a simple text message, 
+		socket.emit('member.getMembers', action.payload)
+  } catch (error) {
+    console.log('get room members error:', error);
+  }
+}
+
 // export our outbound sagas for use in our main socket saga
 export function* outbound(socket) {
 	yield takeEvery("SEND_MESSAGE", sendMessage, socket);
 	yield takeEvery("GET_MESSAGES", getMessages, socket);
+	yield takeEvery("GET_MEMBERS", getMembers, socket);
 }
