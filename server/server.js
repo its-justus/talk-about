@@ -21,7 +21,8 @@ const app = express()
   .use(passport.initialize())
   .use(passport.session())
   /* Routes */
-  .use("/api/user", userRouter)
+	.use("/api/user", userRouter)
+	//.use("/api/topic", topicRouter)
   // Serve static files
   .use(express.static("build"))
   .listen(process.env.PORT || 5000, () => {

@@ -7,6 +7,7 @@ class TopicExplorer extends React.Component {
     return (
       <div>
         Topics:
+				<button type="button" onClick={() => this.props.dispatch({type: "REFRESH_TOPICS"})}>Refresh</button>
         {this.props.topics?.map((cur, i) => (
           <p key={`topic-${i}`}>{cur.name}</p>
         ))}
