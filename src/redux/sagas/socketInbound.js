@@ -6,14 +6,15 @@ function socketChannel(socket) {
 	return new eventChannel((dispatch) => {
 		// message handlers
 		// message refresh resets all messages
-		socket.on("message.refresh", (messages) => {
-			console.log(messages);
-			dispatch({type: "SET_MESSAGES", payload: messages.reverse()});
+		socket.on("message.refresh", (data) => {
+			console.log("Messages refreshed:", data);
+			dispatch({type: "SET_MESSAGES", payload: data.reverse()});
 		})
 
 		// message receive adds a new message to the stream
-		socket.on("message.receive", (message) => {
-			dispatch({type: "ADD_MESSAGE", payload: message});
+		socket.on("message.receive", (data) => {
+			console.log("Message received:", data);
+			dispatch({type: "ADD_MESSAGE", payload: data});
 		})
 
 		// we need to return a unsubscriber function that handles any necessary cleanup

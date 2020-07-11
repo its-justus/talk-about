@@ -33,6 +33,8 @@ export function* openSocket() {
   yield fork(inbound, socket);
 	yield fork(outbound, socket);
 	
+	// get messages for current room
+	yield put({type: "GET_MESSAGES"});
 	// pass our disconnect saga
 	yield takeLeading("CLOSE_SOCKET", disconnect, socket);
 }
