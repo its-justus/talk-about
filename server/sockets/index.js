@@ -16,7 +16,10 @@ function rootSocketHandler(socket, io) {
 	// message from user handler
 	socket.on("message.send", (data) => messageHandler.send(data, socket, io));
 	// user requesting message history
-	socket.on("message.getMessages", (data) => messageHandler.getMessages(data, socket, io));
+	socket.on("message.getMessages", (data) => {
+		console.log("message.getMessages");
+		messageHandler.getMessages(data, socket, io)
+	});
 
 	// request for member list from user
 	socket.on('member.getAll', (data) => {

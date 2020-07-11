@@ -2,7 +2,7 @@ import {takeEvery} from 'redux-saga/effects';
 // outbound handles emission of sagas over the socket
 
 // handles sending messages to the server
-function* sendMessage(socket, action) {
+function sendMessage(socket, action) {
 	try {
 		console.log("send message:", action);
 		// action.payload is expected to be a simple text message, 
@@ -12,13 +12,13 @@ function* sendMessage(socket, action) {
   }
 }
 
-function* getMessages(socket, action) {
+function getMessages(socket, action) {
 	try {
-		console.log("send message:", action);
+		console.log("get messages:", action);
 		// action.payload is expected to be a simple text message, 
 		socket.emit('message.getMessages', action.payload)
   } catch (error) {
-    console.log('send message error:', error);
+    console.log('get messages error:', error);
   }
 }
 
