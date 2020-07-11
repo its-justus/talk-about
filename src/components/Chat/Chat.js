@@ -55,7 +55,8 @@ class Chat extends React.Component {
                 }
                 return (
                   <ChatMessage
-                    key={`message-${i}`}
+										key={`message-${i}`}
+										id={cur.id}
                     author={author}
                     authorID={cur.author_id}
                     text={cur.text}
