@@ -17,6 +17,12 @@ function socketChannel(socket) {
 			dispatch({type: "ADD_MESSAGE", payload: data});
 		})
 
+		// message remove removes a deleted message from the message reducer
+		socket.on("message.remove", (data) => {
+			console.log("Message removed:", data);
+			dispatch({type: "REMOVE_MESSAGE", payload: data})
+		})
+
 		// member refresh updates the member list
 		socket.on('member.refresh', (data) => {
 			console.log("Members refreshed", data);
