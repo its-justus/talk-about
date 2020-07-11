@@ -26,8 +26,8 @@ class ChatMessage extends React.Component {
     this.props.dispatch({
       type: "EDIT_MESSAGE",
       payload: { text: this.state.editInput, id: this.props.id },
-		});
-		this.toggleEditMode();
+    });
+    this.toggleEditMode();
   };
 
   toggleEditMode = () => {
@@ -58,15 +58,23 @@ class ChatMessage extends React.Component {
             {this.props.author}: {this.props.text}
           </p>
         )}
-        <button type="button" onClick={this.toggleEditMode}>
-          Edit
-        </button>
-        <button type="button" onClick={this.deleteMessage}>
-          X
-        </button>
+        {this.props.user.id === this.props.authorID && (
+          <>
+            <button type="button" onClick={this.toggleEditMode}>
+              Edit
+            </button>
+            <button type="button" onClick={this.deleteMessage}>
+              X
+            </button>
+          </>
+        )}
       </div>
     );
   }
 }
 
-export default connect()(ChatMessage);
+const mapStateToProps = (state) => {
+  return { user: state.user };
+};
+
+export default connect(mapStateToProps)(ChatMessage);
