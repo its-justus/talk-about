@@ -8,6 +8,7 @@ const passport = require("./strategies/user.strategy");
 
 // Route includes
 const userRouter = require("./routes/user.router");
+const topicRouter = require("./routes/topic.router");
 const pool = require("./modules/pool");
 
 // app setup
@@ -22,7 +23,7 @@ const app = express()
   .use(passport.session())
   /* Routes */
 	.use("/api/user", userRouter)
-	//.use("/api/topic", topicRouter)
+	.use("/api/topic", topicRouter)
   // Serve static files
   .use(express.static("build"))
   .listen(process.env.PORT || 5000, () => {
