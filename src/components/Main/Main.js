@@ -3,30 +3,32 @@ import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
 import Chat from "../Chat/Chat";
 import MemberList from "../MemberList/MemberList";
+import TopicExplorer from "../TopicExplorer/TopicExplorer";
 
 class Main extends React.Component {
-	componentDidMount = () => {
-	}
+  componentDidMount = () => {};
 
   render() {
     return (
       <div>
         <Grid container justify="center">
-				<Hidden xsDown>
-          <Grid item name="left-section">
-					<Box width={200}>left box</Box>
-          </Grid>
-					</Hidden>
+          <Hidden xsDown>
+            <Grid item name="left-section">
+              <Box width={200}>
+                <TopicExplorer />
+              </Box>
+            </Grid>
+          </Hidden>
           <Grid item name="center-section" xs>
             <Chat />
           </Grid>
-					<Hidden xsDown>
-          <Grid item name="right-section">
-					<Box width={200}>
-						<MemberList />
-					</Box>
-          </Grid>
-					</Hidden>
+          <Hidden xsDown>
+            <Grid item name="right-section">
+              <Box width={200}>
+                <MemberList />
+              </Box>
+            </Grid>
+          </Hidden>
         </Grid>
       </div>
     );
