@@ -37,20 +37,11 @@ class Chat extends React.Component {
     return (
       <div>
         <Grid container>
-          <Grid item xs={3}>
-            time in chat: {this.state.count * 2 + " seconds" || "~"}
-            <br />
-            {/* Users:
-            {this.state.users.map((cur) => (
-              <p>{cur.name}</p>
-            ))} */}
-            <br />
-          </Grid>
           <Grid item xs={9}>
             Messages:
             <div style={containerStyle}>
-              {this.props.messages?.map((cur) => (
-                <p>
+              {this.props.messages?.map((cur, i) => (
+                <p key={`message-${i}`}>
                   {cur.author_id}: {cur.text}
                 </p>
               ))}
