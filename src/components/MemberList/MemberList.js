@@ -8,7 +8,7 @@ class MemberList extends React.Component {
       <div>
         Member List:
         {this.props.members?.map((cur, i) => (
-          <p>{cur.username}</p>
+          <p key={`member-${i}`}>{cur.username}</p>
         ))}
       </div>
     );

@@ -1,21 +1,25 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
+import ChatMessage from "../ChatMessage/ChatMessage";
 
 class Chat extends React.Component {
   state = {
-		count: 0,
-		messageInput: '',
+    count: 0,
+    messageInput: "",
   };
 
   componentDidMount = () => {
-		console.log("Chat.componentDidMount");
+    console.log("Chat.componentDidMount");
   };
 
   sendMessage = (event) => {
     console.log("sendMessage");
     event.preventDefault();
-    this.props.dispatch({type:"SEND_MESSAGE", payload: this.state.messageInput});
+    this.props.dispatch({
+      type: "SEND_MESSAGE",
+      payload: this.state.messageInput,
+    });
     this.setState({ messageInput: "" });
   };
 
@@ -41,19 +45,23 @@ class Chat extends React.Component {
             Messages:
             <div style={containerStyle}>
               {this.props.messages?.map((cur, i) => {
-								let author;
-								const {members} = this.props;
-								for(let index in members) {
-									if(cur.author_id === members[index].id){
-										author = members[index].username;
-										break;
-									}
-								}
-								return (
-                <p key={`message-${i}`}>
-                  {author}: {cur.text}
-                </p>
-              )})}
+                let author;
+                const { members } = this.props;
+                for (let index in members) {
+                  if (cur.author_id === members[index].id) {
+                    author = members[index].username;
+                    break;
+                  }
+                }
+                return (
+                  <ChatMessage
+                    key={`message-${i}`}
+                    author={author}
+                    authorID={cur.author_id}
+                    text={cur.text}
+                  />
+                );
+              })}
               {/* the div below is used for anchoring the chat at the bottom */}
               <div ref={(el) => (this.messagesEnd = el)}></div>
             </div>
@@ -82,9 +90,9 @@ class Chat extends React.Component {
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
   socket: state.socket,
-	user: state.user,
-	messages: state.messages,
-	members: state.members,
+  user: state.user,
+  messages: state.messages,
+  members: state.members,
 });
 
 // this allows us to use <App /> in index.js
