@@ -17,6 +17,12 @@ function socketChannel(socket) {
 			dispatch({type: "ADD_MESSAGE", payload: data});
 		})
 
+		// message update edits a certain message if it is already in the stream
+		socket.on("message.update", (data) => {
+			console.log("Message updated: ", data);
+			dispatch({type: "UPDATE_MESSAGE", payload: data});
+		})
+
 		// message remove removes a deleted message from the message reducer
 		socket.on("message.remove", (data) => {
 			console.log("Message removed:", data);

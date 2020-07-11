@@ -16,11 +16,10 @@ function rootSocketHandler(socket, io) {
 	
 	// message from user handler
 	socket.on("message.send", (data) => messageHandler.send(data, socket, io));
+	// edit message handler
+	socket.on("message.edit", (data) => messageHandler.edit(data, socket, io));
 	// user requesting message history
-	socket.on("message.getMessages", (data) => {
-		console.log("message.getMessages");
-		messageHandler.getMessages(data, socket, io)
-	});
+	socket.on("message.getMessages", (data) => messageHandler.getMessages(data, socket, io));
 	// delete message
 	socket.on('message.delete', (data) => messageHandler.deleteMessage(data, socket, io));
 
