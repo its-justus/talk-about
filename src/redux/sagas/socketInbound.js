@@ -17,6 +17,12 @@ function socketChannel(socket) {
 			dispatch({type: "ADD_MESSAGE", payload: data});
 		})
 
+		// member refresh updates the member list
+		socket.on('member.refresh', (data) => {
+			console.log("Members refreshed", data);
+			dispatch({type: "SET_MEMBERS", payload: data});
+		})
+
 		// we need to return a unsubscriber function that handles any necessary cleanup
 		// since we don't need any cleanup we just pass an empty function
 		return () => {};

@@ -25,7 +25,7 @@ function disconnect(socket) {
 export function* openSocket() {
   // begin upon receiving the OPEN_SOCKET dispatch
   yield take("OPEN_SOCKET");
-
+	console.log("opening socket");
   // get our socket from connect
   const socket = yield call(connect);
 
@@ -33,6 +33,8 @@ export function* openSocket() {
   yield fork(inbound, socket);
 	yield fork(outbound, socket);
 	
+	// get members for current room
+	yield put({type: "GET_MEMBERS"});
 	// get messages for current room
 	yield put({type: "GET_MESSAGES"});
 	// pass our disconnect saga

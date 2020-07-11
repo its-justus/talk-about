@@ -37,23 +37,23 @@ class Chat extends React.Component {
     return (
       <div>
         <Grid container>
-          <Grid item xs={3}>
-            time in chat: {this.state.count * 2 + " seconds" || "~"}
-            <br />
-            {/* Users:
-            {this.state.users.map((cur) => (
-              <p>{cur.name}</p>
-            ))} */}
-            <br />
-          </Grid>
           <Grid item xs={9}>
             Messages:
             <div style={containerStyle}>
-              {this.props.messages?.map((cur) => (
-                <p>
-                  {cur.author_id}: {cur.text}
+              {this.props.messages?.map((cur, i) => {
+								let author;
+								const {members} = this.props;
+								for(let index in members) {
+									if(cur.author_id === members[index].id){
+										author = members[index].username;
+										break;
+									}
+								}
+								return (
+                <p key={`message-${i}`}>
+                  {author}: {cur.text}
                 </p>
-              ))}
+              )})}
               {/* the div below is used for anchoring the chat at the bottom */}
               <div ref={(el) => (this.messagesEnd = el)}></div>
             </div>
@@ -84,6 +84,7 @@ const mapStateToProps = (state) => ({
   socket: state.socket,
 	user: state.user,
 	messages: state.messages,
+	members: state.members,
 });
 
 // this allows us to use <App /> in index.js
