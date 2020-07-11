@@ -21,6 +21,8 @@ function rootSocketHandler(socket, io) {
 		console.log("message.getMessages");
 		messageHandler.getMessages(data, socket, io)
 	});
+	// delete message
+	socket.on('message.delete', (data) => messageHandler.deleteMessage(data, socket, io));
 
 	// get room members
 	socket.on("member.getMembers", (data) => memberHandler.getMembers(data, socket, io));
