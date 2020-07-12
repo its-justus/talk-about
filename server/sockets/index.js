@@ -35,7 +35,7 @@ async function rootSocketHandler(socket, io) {
 	// Disconnect
 	socket.on("disconnect", () => {
 		console.log("user disconnected:", user);
-		socket.disconnect(true)
+		socket.disconnect(true);
 	});
 }
 

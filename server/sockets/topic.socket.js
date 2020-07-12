@@ -2,23 +2,30 @@ const pool = require("../modules/pool");
 const { getSourceMapRange } = require("typescript");
 
 async function joinTopic(payload, socket, io) {
-	const {user} = socket.request.session.passport;
-	console.log("joinTopic", payload);
+  const { user } = socket.request.session.passport;
+  console.log("joinTopic", payload);
 
-	let rooms = await getRooms(payload, user);
-	let userObj = await getUser(socket.request.session.passport.user);
+  let rooms = await getRooms(payload, user);
+  let userObj = await getUser(socket.request.session.passport.user);
   console.log(rooms);
 
   if (rooms.length > 0) {
-		for(let room of rooms){
-			if(room.member_count < 7){
-				console.log("space in room:", room.id);
-				
-			} else {
-				// no rooms with space, make a new room
-			}
-		}
-	}
+    for (let room of rooms) {
+      if (room.member_count < 7) {
+        console.log("space in room:", room.id);
+        const successful = await addUserToRoom(user, room.id);
+        if (successful) {
+					socket.emit("room.joined", room.id);
+          socket.join(room.id, () => {
+            console.log(`User ${user} joined room ${room.id}`);
+            io.to(room.id).emit("member.new", userObj);
+          });
+        }
+      } else {
+        // no rooms with space, make a new room
+      }
+    }
+  }
 }
 
 // helper function to get a list of rooms with the specified topic as a their current topic
@@ -37,8 +44,8 @@ async function getRooms(topic, uid) {
 		GROUP BY room.id;`;
     const queryValues = [topic, uid];
 
-		const result = await pool.query(queryText, queryValues);
-		console.log(queryText, queryValues);
+    const result = await pool.query(queryText, queryValues);
+    console.log(queryText, queryValues);
     return result.rows;
   } catch (error) {
     console.log("getRooms Error:", error);
@@ -55,6 +62,21 @@ async function getUser(userID) {
     return result.rows;
   } catch (error) {
     console.log("getRooms Error:", error);
+  }
+}
+
+async function addUserToRoom(userID, roomID) {
+  try {
+    const queryText = `INSERT INTO room_member (account_id, room_id)
+			VALUES ($1, $2)
+			RETURNING *;`;
+    const queryValues = [userID, roomID];
+
+    await pool.query(queryText, queryValues);
+    return true;
+  } catch (error) {
+    console.log("getRooms Error:", error);
+    return false;
   }
 }
 
