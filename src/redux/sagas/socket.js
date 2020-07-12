@@ -24,7 +24,8 @@ function disconnect(socket) {
 
 //
 export function* openSocket() {
-  // begin upon receiving the OPEN_SOCKET dispatch
+	// begin upon receiving the OPEN_SOCKET dispatch
+	while(true){
   yield take("OPEN_SOCKET");
 	console.log("opening socket");
   // get our socket from connect
@@ -40,4 +41,5 @@ export function* openSocket() {
 	yield put({type: "GET_MESSAGES"});
 	// pass our disconnect saga
 	yield takeLeading("CLOSE_SOCKET", disconnect, socket);
+	}
 }

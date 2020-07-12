@@ -1,5 +1,3 @@
-import io from "socket.io-client";
-
 const socketReducer = (state = null, action) => {
 	switch (action.type) {
     case 'SET_SOCKET':
