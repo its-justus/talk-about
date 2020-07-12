@@ -1,5 +1,6 @@
 import { put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
+import { BrowserRouter } from 'react-router-dom';
 
 // worker Saga: will be fired on "LOGIN" actions
 function* loginUser(action) {
@@ -46,14 +47,16 @@ function* logoutUser(action) {
       withCredentials: true,
     };
 
+		// close our socket connection
+		yield put({type: "CLOSE_SOCKET"});
+
     // the config includes credentials which
     // allow the server session to recognize the user
     // when the server recognizes the user session
     // it will end the session
     yield axios.post('/api/user/logout', config);
 
-		// close our socket connection
-		yield put({type: "CLOSE_SOCKET"});
+		
 		
     // now that the session has ended on the server
     // remove the client-side user object to let

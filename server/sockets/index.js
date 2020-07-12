@@ -3,14 +3,14 @@ const messageHandler = require("./message.socket");
 const memberHandler = require("./member.socket");
 const topicHandler = require("./topic.socket");
 
-function rootSocketHandler(socket, io) {
+async function rootSocketHandler(socket, io) {
   if (!socket.request.session.passport) {
 		console.log("socket connected with no passport session");
     return;
   } // exit if passport session doesn't exist
 
   // grab our user id from the session
-  const {user} = socket.request.session.passport;
+	const {user} = socket.request.session.passport;
 	console.log(`User connected, id: ${user}`);
 
   // socket handlers
@@ -31,6 +31,12 @@ function rootSocketHandler(socket, io) {
 
 	// Topic Handlers
 	socket.on("topic.join", (data) => topicHandler.joinTopic(data, socket, io));
+
+	// Disconnect
+	socket.on("disconnect", () => {
+		console.log("user disconnected:", user);
+		socket.disconnect(true)
+	});
 }
 
 module.exports = rootSocketHandler;

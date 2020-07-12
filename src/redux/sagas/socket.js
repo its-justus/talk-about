@@ -18,7 +18,8 @@ function connect() {
 }
 
 function disconnect(socket) {
-	socket.emit("disconnect");
+	console.log("Closing socket");
+	socket.close();
 }
 
 //
