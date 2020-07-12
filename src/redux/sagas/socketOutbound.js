@@ -52,6 +52,16 @@ function getMembers(socket, action) {
   }
 }
 
+function joinTopic(socket, action) {
+	try {
+		console.log("join topic:", action);
+		// action.payload is expected to be the topic the user wants to join 
+		socket.emit('topic.join', action.payload)
+  } catch (error) {
+    console.log('join topic error:', error);
+  }
+}
+
 // export our outbound sagas for use in our main socket saga
 export function* outbound(socket) {
 	yield takeEvery("SEND_MESSAGE", sendMessage, socket);
@@ -59,4 +69,5 @@ export function* outbound(socket) {
 	yield takeEvery("DELETE_MESSAGE", deleteMessage, socket);
 	yield takeEvery("GET_MESSAGES", getMessages, socket);
 	yield takeEvery("GET_MEMBERS", getMembers, socket);
+	yield takeEvery("JOIN_TOPIC", joinTopic, socket);
 }

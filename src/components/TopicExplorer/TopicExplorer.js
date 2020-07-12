@@ -10,6 +10,7 @@ class TopicExplorer extends React.Component {
 	joinTopic = (event) => {
 		event.preventDefault();
 		this.props.dispatch({type: "JOIN_TOPIC", payload: this.state.topicInput});
+		this.setState({topicInput: ''});
 	}
 
   render() {
