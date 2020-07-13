@@ -52,6 +52,16 @@ function getMembers(socket, action) {
   }
 }
 
+function getRooms(socket, action) {
+	try {
+		console.log("get rooms:", action);
+		// action.payload is expected to be a simple text message, 
+		socket.emit('room.getRooms', action.payload)
+  } catch (error) {
+    console.log('get rooms error:', error);
+  }
+}
+
 function joinTopic(socket, action) {
 	try {
 		console.log("join topic:", action);
@@ -69,5 +79,6 @@ export function* outbound(socket) {
 	yield takeEvery("DELETE_MESSAGE", deleteMessage, socket);
 	yield takeEvery("GET_MESSAGES", getMessages, socket);
 	yield takeEvery("GET_MEMBERS", getMembers, socket);
+	yield takeEvery("GET_ROOMS", getRooms, socket);
 	yield takeEvery("JOIN_TOPIC", joinTopic, socket);
 }

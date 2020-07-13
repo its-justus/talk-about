@@ -2,6 +2,7 @@ const pool = require("../modules/pool");
 const messageHandler = require("./message.socket");
 const memberHandler = require("./member.socket");
 const topicHandler = require("./topic.socket");
+const roomHandler = require("./room.socket");
 
 async function rootSocketHandler(socket, io) {
   if (!socket.request.session.passport) {
@@ -28,6 +29,10 @@ async function rootSocketHandler(socket, io) {
 	// Room Member Handlers
 	// get room members
 	socket.on("member.getMembers", (data) => memberHandler.getMembers(data, socket, io));
+
+	// Room Handlers
+	// get rooms
+	socket.on("room.getRooms", (data) => roomHandler.getRooms(data, socket, io));
 
 	// Topic Handlers
 	socket.on("topic.join", (data) => topicHandler.joinTopic(data, socket, io));

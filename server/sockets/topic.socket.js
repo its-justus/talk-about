@@ -32,7 +32,15 @@ async function joinTopic(payload, socket, io) {
     // if we've gotten to this point that means there are no rooms with space
     // for user, so we'll make a new one.
     console.log("no rooms have space, adding room");
-    const roomID = await makeRoomForUser(payload, user);
+		const roomID = await makeRoomForUser(payload, user);
+		
+		// then update our user via the socket
+    socket.emit("room.joined", roomID);
+    socket.join(roomID, () => {
+      console.log(`User ${user} joined room ${roomID}`);
+      io.to(roomID).emit("member.new", userObj);
+    });
+
   } else {
     // otherwise if it's a new topic make a room for our user
     console.log("no rooms found, adding room");

@@ -35,6 +35,8 @@ export function* openSocket() {
   yield fork(inbound, socket);
 	yield fork(outbound, socket);
 	
+	// get user's rooms
+	yield put({type: "GET_ROOMS"});
 	// get members for current room
 	yield put({type: "GET_MEMBERS"});
 	// get messages for current room
