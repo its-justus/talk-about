@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
+import RoomListItem from '../RoomListItem/RoomListItem';
 
 class TopicExplorer extends React.Component {
   state = {
@@ -40,7 +41,7 @@ class TopicExplorer extends React.Component {
         ))}
         My Rooms:
         {this.props.rooms?.map((cur, i) => (
-          <p key={`room-${i}`}>{cur.topic}</p>
+          <RoomListItem key={`room-${i}`} room={cur} />
         ))}
       </div>
     );
