@@ -6,7 +6,7 @@ function getMembers(payload, socket, io) {
 		JOIN account ON account.id = room_member.account_id
 		WHERE room_id = $1
 		ORDER BY account.username ASC;`;
-  const queryValues = [1];
+  const queryValues = [payload];
   pool
     .query(queryText, queryValues)
     .then((result) => {

@@ -96,7 +96,7 @@ function getMessages(payload, socket, io) {
 		WHERE room_id = $1
 		ORDER BY created_at DESC
 		LIMIT 10;`;
-  const queryValues = [1];
+  const queryValues = [payload];
   pool
     .query(queryText, queryValues)
     .then((result) => {

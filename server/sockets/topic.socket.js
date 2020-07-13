@@ -15,11 +15,42 @@ async function joinTopic(payload, socket, io) {
         console.log("space in room:", room.id);
         const successful = await addUserToRoom(user, room.id);
         if (successful) {
+          // TODO clean this up, its gonna be messy
+          const roomsIn = Object.keys(socket.rooms);
+          for (let roomIn of roomsIn) {
+            socket.leave(roomIn);
+          }
+
+          console.log(`User ${user} listening in room ${room.id}`);
+
+          socket.join(room.id);
+
+          const query = {};
+          query.text = `SELECT * FROM message 
+						WHERE room_id = $1
+						ORDER BY created_at DESC
+						LIMIT 10;`;
+          query.values = [room.id];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("message.refresh", query.result.rows);
+
+          query.text = `SELECT account.id, account.username FROM room_member
+						JOIN account ON account.id = room_member.account_id
+						WHERE room_id = $1
+						ORDER BY account.username ASC;`;
+          query.values = [room.id];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("member.refresh", query.result.rows);
+
+          query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
+						JOIN room_member ON room.id = room_member.room_id
+						JOIN topic ON room.topic_id = topic.id
+						WHERE room_member.account_id = $1;`;
+          query.values = [user];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("room.refresh", query.result.rows);
+
           socket.emit("room.joined", room.id);
-          socket.join(room.id, () => {
-            console.log(`User ${user} joined room ${room.id}`);
-            io.to(room.id).emit("member.new", userObj);
-          });
           return;
         } else {
           // error adding the user to the room
@@ -32,15 +63,14 @@ async function joinTopic(payload, socket, io) {
     // if we've gotten to this point that means there are no rooms with space
     // for user, so we'll make a new one.
     console.log("no rooms have space, adding room");
-		const roomID = await makeRoomForUser(payload, user);
-		
-		// then update our user via the socket
+    const roomID = await makeRoomForUser(payload, user);
+
+    // then update our user via the socket
     socket.emit("room.joined", roomID);
     socket.join(roomID, () => {
       console.log(`User ${user} joined room ${roomID}`);
       io.to(roomID).emit("member.new", userObj);
     });
-
   } else {
     // otherwise if it's a new topic make a room for our user
     console.log("no rooms found, adding room");
@@ -94,6 +124,7 @@ async function getUser(userID) {
 
 async function addUserToRoom(userID, roomID) {
   try {
+		console.log("adding user to room", {userID, roomID});
     const queryText = `INSERT INTO room_member (account_id, room_id)
 			VALUES ($1, $2)
 			RETURNING *;`;
@@ -119,7 +150,7 @@ async function makeRoomForUser(topic, userID) {
     query.values = [topic];
     query.result = await pool.query(query.text, query.values);
 
-		console.log("select topics successfull", query.result.rows);
+    console.log("select topics successfull", query.result.rows);
 
     // if we got a topic id back
     if (query.result.rowCount > 0) {
@@ -131,10 +162,12 @@ async function makeRoomForUser(topic, userID) {
       query.values = [topicID];
       query.result = await pool.query(query.text, query.values);
 
-			console.log("insert room successfull", query.result.rows[0]);
+      console.log("insert room successfull", query.result.rows[0]);
 
-      console.log("insert row: ", query.result.rows);
-      pool.query("ROLLBACK");
+			console.log("insert row: ", query.result.rows);
+			await addUserToRoom(userID, query.result.rows[0].id)
+			pool.query("COMMIT");
+			return query.result.rows[0].id;
       // then add the user to that room
       // await addUserToRoom(userID, topicID);
     } else {
@@ -143,17 +176,17 @@ async function makeRoomForUser(topic, userID) {
 				VALUES ($1)
 				RETURNING *;`;
       query.values = [topic];
-			query.result = await pool.query(query.text, query.values);
-			
-			console.log("insert topic successfull", query.result.rows[0]);
+      query.result = await pool.query(query.text, query.values);
+
+      console.log("insert topic successfull", query.result.rows[0]);
 
       // then make a room for that topic
       query.text = `INSERT INTO room (topic_id)
 				VALUES ($1)
 				RETURNING *;`;
       query.values = [query.result.rows[0].id];
-			query.result = await pool.query(query.text, query.values);
-			console.log("insert room successfull", query.result.rows[0]);
+      query.result = await pool.query(query.text, query.values);
+      console.log("insert room successfull", query.result.rows[0]);
 
       // then add our user to the room
       await addUserToRoom(userID, query.result.rows[0].id);

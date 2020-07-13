@@ -35,7 +35,7 @@ function deleteMessage(socket, action) {
 function getMessages(socket, action) {
 	try {
 		console.log("get messages:", action);
-		// action.payload is expected to be a simple text message, 
+		// action.payload is expected to be a room id for which to get messages, 
 		socket.emit('message.getMessages', action.payload)
   } catch (error) {
     console.log('get messages error:', error);
