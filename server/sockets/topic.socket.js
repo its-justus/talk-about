@@ -11,7 +11,7 @@ async function joinTopic(payload, socket, io) {
   if (rooms.length > 0) {
     for (let room of rooms) {
       console.log(`Room: `, room);
-      if (room.member_count < 7) {
+      if (room.member_count < 3) {
         console.log("space in room:", room.id);
         const successful = await addUserToRoom(user, room.id);
         if (successful) {
@@ -41,6 +41,7 @@ async function joinTopic(payload, socket, io) {
           query.values = [room.id];
           query.result = await pool.query(query.text, query.values);
           socket.emit("member.refresh", query.result.rows);
+					io.to(room.id).emit("member.refresh", query.result.rows)
 
           query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
 						JOIN room_member ON room.id = room_member.room_id
@@ -63,7 +64,33 @@ async function joinTopic(payload, socket, io) {
     // if we've gotten to this point that means there are no rooms with space
     // for user, so we'll make a new one.
     console.log("no rooms have space, adding room");
-    const roomID = await makeRoomForUser(payload, user);
+		const roomID = await makeRoomForUser(payload, user);
+		
+		const query = {};
+          query.text = `SELECT * FROM message 
+						WHERE room_id = $1
+						ORDER BY created_at DESC
+						LIMIT 10;`;
+          query.values = [room.id];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("message.refresh", query.result.rows);
+
+          query.text = `SELECT account.id, account.username FROM room_member
+						JOIN account ON account.id = room_member.account_id
+						WHERE room_id = $1
+						ORDER BY account.username ASC;`;
+          query.values = [room.id];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("member.refresh", query.result.rows);
+					io.to(room.id).emit("member.refresh", query.result.rows)
+
+          query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
+						JOIN room_member ON room.id = room_member.room_id
+						JOIN topic ON room.topic_id = topic.id
+						WHERE room_member.account_id = $1;`;
+          query.values = [user];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("room.refresh", query.result.rows);
 
     // then update our user via the socket
     socket.emit("room.joined", roomID);
@@ -74,7 +101,33 @@ async function joinTopic(payload, socket, io) {
   } else {
     // otherwise if it's a new topic make a room for our user
     console.log("no rooms found, adding room");
-    const roomID = await makeRoomForUser(payload, user);
+		const roomID = await makeRoomForUser(payload, user);
+		
+		const query = {};
+          query.text = `SELECT * FROM message 
+						WHERE room_id = $1
+						ORDER BY created_at DESC
+						LIMIT 10;`;
+          query.values = [room.id];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("message.refresh", query.result.rows);
+
+          query.text = `SELECT account.id, account.username FROM room_member
+						JOIN account ON account.id = room_member.account_id
+						WHERE room_id = $1
+						ORDER BY account.username ASC;`;
+          query.values = [room.id];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("member.refresh", query.result.rows);
+					io.to(room.id).emit("member.refresh", query.result.rows)
+
+          query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
+						JOIN room_member ON room.id = room_member.room_id
+						JOIN topic ON room.topic_id = topic.id
+						WHERE room_member.account_id = $1;`;
+          query.values = [user];
+          query.result = await pool.query(query.text, query.values);
+          socket.emit("room.refresh", query.result.rows);
 
     // then update our user via the socket
     socket.emit("room.joined", roomID);
