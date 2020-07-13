@@ -1,0 +1,84 @@
+TODO
+[ ] - walk through backend
+
+_____BACKEND_____
+
+[ ] - socket.on(session.startup) this will be emitted once upon initial loading of app
+	this is basically our app startup function. it feeds a bunch of data to the user
+	[ ] - add sockets/session.socket.js
+		[ ] - query db for rooms user is a member of
+			returns array(rooms) of room objects {id, created_at, topic, topic_id}
+		[ ] - for each room of rooms
+			[ ] - break this off into a function? probably async?
+			[ ] - query db for room members | break this off into function?
+				returns array(members) of room member objects {id, username}
+				stored in room.members
+			[ ] - query db for room history (limit to some number of messages) | function?
+				returns array(history) of message objects {id, author_id, room_id, text, created_at}
+				stored in room.history
+			[ ] - socket.emit(room.joined) with room as payload
+			[ ] - socket.join(room.id) so socket now set to listen to all traffic for room
+				[ ] - include callback that does io.to(room.id).emit("member.joined") with payload of {user.id, user.name}
+		[ ] - once all rooms have been sent, send popular topics over
+			[ ] - query database for topics, join rooms, group by rooms, and get count of rooms for each topic
+				order by room count descending limit 10
+				store as popularTopics
+			[ ] - socket.emit("topic.popularTopics") with popularTopics as payload
+		[ ] - socket.emit("session.ready") this is the message to the client that everything has been received and they can start rendering the dom
+[ ] - sockets/topic.socket.js topic join refactor
+	[ ] - abstract message select query into function, store as room.history
+	[ ] - abstract member select query into function, store as room.members
+	[ ] - remove rooms selection statement. add data to room object.
+	[ ] - ensure room object has the following in all cases before emitting room.joined
+		[ ] - room.id
+		[ ] - room.created_at
+		[ ] - room.topic
+		[ ] - room.topic_id
+		[ ] - room.members
+		[ ] - room.history 
+	[ ] - remove individual emits, only do socket.emit(room.joined) with payload of room
+	[ ] - finish with socket.join(room.id)
+		[ ] - include callback of io.to(room.id).emit(member.joined) with payload of {user.id, user.name}
+[ ] - sockets/index.js
+	[ ] - remove member.getMembers. this will be handled in session.startup and by emitting member.joined
+	[ ] - remove room.getRooms. this is handled in session.startup and topic join
+	[ ] - remove room.listen. this is handled in session.startup and topic join
+	[ ] - add room.leave to remove user from room
+		[ ] - socket.emit room.left with payload of room_id
+[ ] - sockets/message.socket.js
+	[ ] - remove getMessages function. this is handled in session.startup and topic.join now
+[ ] - remove sockets/member.socket.js. all functionality handled in session.startup and topic.join. 
+[ ] - remove sockets/room.socket.js. all functionality handled in session.startup and topic.join
+
+
+		
+	______FRONTEND______
+[ ] - on OPEN_SOCKET saga, socket.emit(session.startup) to request data from server
+[ ] - add statusReducer. this stores the status of the session. set to "OKAY" on session ready. 
+	[ ] - add socket.on(session.ready) to handle this change. it should dispatch SET_STATUS, payload: 'OKAY'
+[ ] - add conditional render to Main.js to show a loading spinner until state.status is "OKAY"
+[ ] - change socket.on(room.joined) to send data as payload
+[ ] - socket.on(room.joined) saga
+	[ ] - dispatch(ADD_ROOM, {id, created_at, topic_id})
+		[ ] - in roomsReducer, add object to state(array)
+	[ ] - dispatch(ADD_TOPIC, {topic_id, topic})
+		[ ] - in topicsReducer, add topic to newState(object) as newState[topic_id] = topic
+			- eg. the idea is to make the topic name accessible as state.topics[7] to get the text version of topic id 7
+	[ ] - dispatch(ADD_MEMBER_LIST, {room_id, [room.members]})
+		[ ] - in memberListsReducer[NEW], add member list to newState(object) as newState[room_id] = room.members
+			- the idea is to make the whole list of members for room 42 available at state.memberLists[42]
+	[ ] - dispatch(ADD_HISTORY, {room_id, [room.history]}) 
+		[ ] - in historiesReducer[NEW], add history to newState(object) as newState[room_id] = room.history
+			- the idea is to make the message history for room 42 available at state.histories[42]
+
+[ ] - remove messages saga and reducer, change histories reducer to handle socketInbound dispatches
+[ ] - change chat component to read from state.histories[room] where room is the room id stored in state.currentRoom
+[ ] - remove members saga and reducer, change memberLists reducer to handle socketInbound dispatches
+[ ] - change member list to read from state.memberLists[room] where room is the room id stored in state.currentRoom 
+[ ] - add button to leave room
+	[ ] - dispatch (LEAVE_ROOM) with payload of room_id
+		[ ] - socketOutbound add leave room saga
+[ ] - socketInbound add socket.on(room.left) 
+	[ ] - dispatch (REMOVE_ROOM) with payload (data)
+	[ ] - dispatch (REMOVE_MEMBER_LIST) with payload (data)
+	[ ] - dispatch (REMOVE_HISTORY) with payload (data)
