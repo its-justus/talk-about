@@ -8,3 +8,5 @@ const currentRoomReducer = (state = {}, action) => {
 			return state;
 	}
 }
+
+export default currentRoomReducer;

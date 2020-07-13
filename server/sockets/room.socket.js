@@ -18,6 +18,13 @@ function getRooms(payload, socket, io) {
     });
 }
 
+function listen(payload, socket, io) {
+	const {user} = socket.request.session.passport;
+	console.log("setRooms");
+	
+}
+
 module.exports = {
-  getRooms: getRooms,
+	getRooms: getRooms,
+	listen: listen,
 };

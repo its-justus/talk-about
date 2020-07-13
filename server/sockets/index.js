@@ -34,6 +34,9 @@ async function rootSocketHandler(socket, io) {
 	// get rooms
 	socket.on("room.getRooms", (data) => roomHandler.getRooms(data, socket, io));
 
+	// set current room
+	socket.on("room.listen", (data) => roomHandler.listen(data, socket, io));
+
 	// Topic Handlers
 	socket.on("topic.join", (data) => topicHandler.joinTopic(data, socket, io));
 

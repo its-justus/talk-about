@@ -62,6 +62,16 @@ function getRooms(socket, action) {
   }
 }
 
+function setRoom(socket, action) {
+	try {
+		console.log("set room:", action);
+		// action.payload is expected to be the id of the room being set as active 
+		socket.emit('room.listen', action.payload)
+  } catch (error) {
+    console.log('get rooms error:', error);
+  }
+}
+
 function joinTopic(socket, action) {
 	try {
 		console.log("join topic:", action);
@@ -80,5 +90,6 @@ export function* outbound(socket) {
 	yield takeEvery("GET_MESSAGES", getMessages, socket);
 	yield takeEvery("GET_MEMBERS", getMembers, socket);
 	yield takeEvery("GET_ROOMS", getRooms, socket);
+	yield takeEvery("SELECT_CURRENT_ROOM", setRoom, socket);
 	yield takeEvery("JOIN_TOPIC", joinTopic, socket);
 }
