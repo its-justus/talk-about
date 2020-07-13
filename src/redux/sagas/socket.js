@@ -17,9 +17,10 @@ function connect() {
   });
 }
 
-function disconnect(socket) {
+function disconnect(arg) {
 	console.log("Closing socket");
-	socket.close();
+	clearInterval(arg.heartbeat)
+	arg.socket.close();
 }
 
 //
@@ -41,7 +42,11 @@ export function* openSocket() {
 	yield put({type: "GET_MEMBERS"});
 	// get messages for current room
 	yield put({type: "GET_MESSAGES"});
+	// set up a heartbeat to keep the socket open
+	const heartbeat = setInterval(() => {
+		socket.emit('heartbeat');
+	}, 19*1000); 
 	// pass our disconnect saga
-	yield takeLeading("CLOSE_SOCKET", disconnect, socket);
+	yield takeLeading("CLOSE_SOCKET", disconnect, {socket, heartbeat});
 	}
 }
