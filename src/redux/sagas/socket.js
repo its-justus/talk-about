@@ -18,12 +18,14 @@ function connect() {
 }
 
 function disconnect(socket) {
-	socket.emit("disconnect");
+	console.log("Closing socket");
+	socket.close();
 }
 
 //
 export function* openSocket() {
-  // begin upon receiving the OPEN_SOCKET dispatch
+	// begin upon receiving the OPEN_SOCKET dispatch
+	while(true){
   yield take("OPEN_SOCKET");
 	console.log("opening socket");
   // get our socket from connect
@@ -33,10 +35,13 @@ export function* openSocket() {
   yield fork(inbound, socket);
 	yield fork(outbound, socket);
 	
+	// get user's rooms
+	yield put({type: "GET_ROOMS"});
 	// get members for current room
 	yield put({type: "GET_MEMBERS"});
 	// get messages for current room
 	yield put({type: "GET_MESSAGES"});
 	// pass our disconnect saga
 	yield takeLeading("CLOSE_SOCKET", disconnect, socket);
+	}
 }

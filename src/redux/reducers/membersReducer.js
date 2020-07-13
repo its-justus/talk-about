@@ -1,9 +1,13 @@
 const membersReducer = (state = [], action) => {
+	let newState = [...state];
 	switch (action.type) {
     case 'SET_MEMBERS':
 			return action.payload;
+		case 'ADD_MEMBER':
+			newState = [...newState, action.payload]
+			return newState;
 		case 'UPDATE_MEMBER':
-			let newState = [...state];
+			newState = [...state];
 			const {index, updatedMember} = action.payload;  
 			newState[index] = updatedMember;
 			return newState;

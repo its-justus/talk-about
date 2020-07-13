@@ -30,12 +30,14 @@ router.post('/register', (req, res, next) => {
 // this middleware will run our POST if successful
 // this middleware will send a 404 if not successful
 router.post('/login', userStrategy.authenticate('local'), (req, res) => {
+	console.log("user logged in");
   res.sendStatus(200);
 });
 
 // clear all server session information about this user
 router.post('/logout', (req, res) => {
-  // Use passport's built-in method to log out the user
+	// Use passport's built-in method to log out the user
+	console.log("user logged out");
   req.logout();
   res.sendStatus(200);
 });

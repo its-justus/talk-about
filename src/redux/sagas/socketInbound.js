@@ -29,10 +29,32 @@ function socketChannel(socket) {
 			dispatch({type: "REMOVE_MESSAGE", payload: data})
 		})
 
+		// Member events
+
 		// member refresh updates the member list
 		socket.on('member.refresh', (data) => {
 			console.log("Members refreshed", data);
 			dispatch({type: "SET_MEMBERS", payload: data});
+		})
+
+		// member.new is sent when a new member joins the room
+		socket.on('member.new', (data) => {
+			console.log("New member joined", data);
+			dispatch({type: "ADD_MEMBER", payload: data});
+		})
+
+		// Room Events
+
+		// room refresh
+		socket.on('room.refresh', (data) => {
+			console.log("Rooms refreshed");
+			dispatch({type: "SET_ROOMS", payload: data});
+		})
+
+		// room joined
+		socket.on('room.joined', (data) => {
+			console.log("Joined room");
+			dispatch({type: "SET_CURRENT_ROOM", payload: {id: data}});
 		})
 
 		// we need to return a unsubscriber function that handles any necessary cleanup
