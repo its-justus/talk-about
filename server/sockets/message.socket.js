@@ -7,12 +7,12 @@ function send(payload, socket, io) {
 			VALUES ($1, $2, $3)
 			RETURNING *;`;
   // TODO ADD ROOM SPECIFIER TO queryValues
-  const queryValues = [user, 1, payload];
+  const queryValues = [user, payload.room, payload.text];
   pool
     .query(queryText, queryValues)
     .then((result) => {
       console.log("message saved");
-      io.emit("message.receive", result.rows[0]);
+      io.to(payload.room).emit("message.receive", result.rows[0]);
     })
     .catch((error) => {
       socket.emit("message.error", "error saving message");

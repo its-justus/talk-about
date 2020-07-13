@@ -18,9 +18,9 @@ class Chat extends React.Component {
     event.preventDefault();
     this.props.dispatch({
       type: "SEND_MESSAGE",
-      payload: this.state.messageInput,
+      payload: {text: this.state.messageInput, room: this.props.currentRoom.id},
     });
-    this.setState({ messageInput: "" });
+    	this.setState({ messageInput: "" });
   };
 
   // // this is some hacky shit to keep the scroll at the bottom :)
@@ -93,7 +93,8 @@ const mapStateToProps = (state) => ({
   socket: state.socket,
   user: state.user,
   messages: state.messages,
-  members: state.members,
+	members: state.members,
+	currentRoom: state.currentRoom,
 });
 
 // this allows us to use <App /> in index.js

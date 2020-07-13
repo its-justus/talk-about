@@ -51,6 +51,12 @@ function socketChannel(socket) {
 			dispatch({type: "SET_ROOMS", payload: data});
 		})
 
+		// room joined
+		socket.on('room.joined', (data) => {
+			console.log("Joined room");
+			dispatch({type: "SET_CURRENT_ROOM", payload: {id: data}});
+		})
+
 		// we need to return a unsubscriber function that handles any necessary cleanup
 		// since we don't need any cleanup we just pass an empty function
 		return () => {};
