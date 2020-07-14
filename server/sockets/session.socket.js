@@ -1,6 +1,12 @@
 const pool = require("../modules/pool");
 
 /**
+ * OPTIMIZATION: Much like topic.socket this module has lots of room for improvement
+ * due to many pg queries being done. Not a big deal right now, but something to
+ * consider in the future.
+ */
+
+/**
  * start initializes the user's current session by sending rooms, histories,
  * and member lists to the user. it is only run on demand by the client, so any
  * disconnections don't necessarily force start to run again.
@@ -11,37 +17,41 @@ const pool = require("../modules/pool");
  * @returns null
  */
 async function start(data, socket, io) {
-  // pull our user id from our passport session
-  const { user } = socket.request.session.passport;
-  console.log("session.start user:", user);
-  const startTime = Date.now();
+  try {
+		// initialize our performance metric
+    const startTime = Date.now();
+    // pull our user id from our passport session
+    const { user } = socket.request.session.passport;
 
-  // OPTIMIZATION: combine these functions into a single pg query.
-  // I'm really only splitting these functions apart for legibility
-  // and simplicity at the moment. large potential for performance improvement, but
-  // this is an infrequent call (once at login) so its not a big deal
-  // query db for rooms user is a member of
-  const rooms = await getUserRooms(user);
-  // query db for topics of user's rooms
-  const topics = await getUserTopics(user);
+    // OPTIMIZATION: combine these functions into a single pg query.
+    // I'm really only splitting these functions apart for legibility
+    // and simplicity at the moment. large potential for performance improvement, but
+    // this is an infrequent call (once at login) so its not a big deal
+    // query db for rooms user is a member of
+    const rooms = await getUserRooms(user);
 
-  // OPTIMIZATION: this section in particular is where the real gains are
-  // loop through each room in rooms
-  for (let room of rooms) {
-    room.members = await getRoomMembers(room.id);
-    room.history = await getRoomHistory(room.id);
-    socket.emit("room.joined", room);
-    socket.join(room.id);
-  }
+    // OPTIMIZATION: this section in particular is where the real gains are
+    // loop through each room in rooms
+    for (let room of rooms) {
+      room.topic = await getTopic(room.topic_id);
+      room.members = await getRoomMembers(room.id);
+      room.history = await getRoomHistory(room.id);
+      socket.emit("room.joined", room);
+      socket.join(room.id);
+    }
 
-  // query db for popular topics
-  const popularTopics = await getPopularTopics();
-  socket.emit("topic.popularTopics", popularTopics);
+    // query db for popular topics
+    const popularTopics = await getPopularTopics();
+    socket.emit("topic.popularTopics", popularTopics);
 
-  // let the client know we're all done
-  socket.emit("session.ready");
+    // let the client know we're all done
+    socket.emit("session.ready");
 
-  console.log("run time (ms):", Date.now() - startTime);
+		// log some performance data
+    console.log("run time (ms):", Date.now() - startTime);
+  } catch (error) {
+		console.log("session.start error:", error);
+	}
 }
 
 /**
@@ -68,27 +78,26 @@ async function getUserRooms(userID) {
 }
 
 /**
- * getUserTopics queries the database for the topics of the rooms the user
- * is a member of
+ * getUserTopics queries the database for a topic
  *
- * @param {integer} userID the user's userID
- * @returns {array} an array of topic objects
+ * @param {number} topicID the id of the topic
+ * @returns {topicObj} a topic object
  */
-async function getUserTopics(userID) {
-  //console.log("getUserTopics:", userID);
+async function getTopic(topicID) {
+  try {
+    // define our query
+    const query = {};
+    (query.text = `SELECT topic.* FROM topic
+		WHERE topic.id = $1;`),
+      (query.values = [topicID]);
+    query.result = await pool.query(query.text, query.values);
 
-  // define our query
-  const query = {
-    text: `SELECT topic.* FROM topic
-			JOIN room ON topic.id = room.topic_id
-			JOIN room_member ON room.id = room_member.room_id
-			WHERE room_member.account_id = $1;`,
-    values: [userID],
-  };
-  // submit query to pool
-  query.result = await pool.query(query.text, query.values);
-  //console.log("query result:",query.result.rows);
-  return query.result.rows;
+    // return our result
+    return query.result.rows[0];
+  } catch (error) {
+    console.log("getTopic error:", error);
+    throw error;
+  }
 }
 
 /**
