@@ -18,12 +18,14 @@ async function start(data, socket, io) {
 
 	// OPTIMIZATION: combine these functions into a single pg query.
 	// I'm really only splitting these functions apart for legibility 
-	// and simplicity at the moment.
+	// and simplicity at the moment. large potential for performance improvement, but
+	// this is an infrequent call (once at login) so its not a big deal
 	// query db for rooms user is a member of
 	const rooms = await getUserRooms(user);
 	// query db for topics of user's rooms
 	const topics = await getUserTopics(user);
 
+	// OPTIMIZATION: this section in particular is where the real gains are
 	// loop through each room in rooms
 	for(let room of rooms){
 		room.members = await getRoomMembers(room.id);
@@ -31,6 +33,11 @@ async function start(data, socket, io) {
 		socket.emit("room.joined", room);
 		socket.join(room.id);
 	}
+
+	// query db for popular topics
+	const popularTopics = await getPopularTopics();
+	socket.emit("topic.popularTopics", popularTopics);
+
 	console.log('run time (ms):', Date.now() - startTime);
 }
 
@@ -123,6 +130,31 @@ async function getRoomHistory(roomID) {
 	};
 	// submit query to pool
 	query.result = await pool.query(query.text, query.values);
+	console.log("query result:",query.result.rows);
+	return query.result.rows;
+}
+
+/**
+ * getPopularTopics queries the database for the topics with the most
+ * rooms currently discussing it
+ * 
+ * @param none
+ * @returns {array} an array of topic objects
+ */
+async function getPopularTopics() {
+	console.log("getPopularTopics:");
+
+	// define our query
+	const query = {
+		text: `SELECT topic.*, count(room) AS rooms FROM topic
+			JOIN room ON topic.id = room.topic_id
+			GROUP BY topic.id
+			ORDER BY count(room) DESC, lower(topic.name) ASC
+			LIMIT 10;`,
+		values: [],
+	};
+	// submit query to pool
+	query.result = await pool.query(query.text);
 	console.log("query result:",query.result.rows);
 	return query.result.rows;
 }

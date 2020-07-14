@@ -57,6 +57,11 @@ function socketChannel(socket) {
 			//dispatch({type: "SET_CURRENT_ROOM", payload: {id: data}});
 		})
 
+		// receive popular topics
+		socket.on('topic.popularTopics', (data) => {
+			console.log("Popular topics:", data);
+		})
+
 		// we need to return a unsubscriber function that handles any necessary cleanup
 		// since we don't need any cleanup we just pass an empty function
 		return () => {};
