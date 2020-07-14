@@ -27,6 +27,7 @@ async function start(data, socket, io) {
 	// loop through each room in rooms
 	for(let room of rooms){
 		room.members = await getRoomMembers(room.id);
+		room.history = await getRoomHistory(room.id);
 	}
 	console.log('run time (ms):', Date.now() - startTime);
 }
@@ -92,6 +93,30 @@ async function getRoomMembers(roomID) {
 		text: `SELECT account.id, account.username FROM account
 			JOIN room_member ON account.id = room_member.account_id
 			WHERE room_member.room_id = $1;`,
+		values: [roomID],
+	};
+	// submit query to pool
+	query.result = await pool.query(query.text, query.values);
+	console.log("query result:",query.result.rows);
+	return query.result.rows;
+}
+
+/**
+ * getRoomHistory queries the database for the room's message history
+ * only retrieves 20 messages
+ * 
+ * @param {integer} roomID the room to retrieve the history for
+ * @returns {array} an array of message objects
+ */
+async function getRoomHistory(roomID) {
+	console.log("getRoomMembers:", roomID);
+
+	// define our query
+	const query = {
+		text: `SELECT message.* FROM message
+			WHERE room_id = $1
+			ORDER BY created_at DESC
+			LIMIT 20;`,
 		values: [roomID],
 	};
 	// submit query to pool
