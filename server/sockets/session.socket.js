@@ -15,8 +15,13 @@ async function start(data, socket, io) {
 	const { user } = socket.request.session.passport;
 	console.log('session.start user:', user);
 
+	// OPTIMIZATION: combine these functions into a single pg query.
+	// I'm really only splitting these functions apart for legibility 
+	// and simplicity at the moment.
 	// query db for rooms user is a member of
 	const rooms = await getUserRooms(user);
+	// query db for topics of user's rooms
+	const topics = await getUserTopics(user);
 }
 
 /**
@@ -32,6 +37,30 @@ async function getUserRooms(userID){
 	// define our query
 	const query = {
 		text: `SELECT room.* FROM room
+			JOIN room_member ON room.id = room_member.room_id
+			WHERE room_member.account_id = $1;`,
+		values: [userID],
+	};
+	// submit query to pool
+	query.result = await pool.query(query.text, query.values);
+	console.log("query result:",query.result.rows);
+	return query.result.rows;
+}
+
+/**
+ * getUserTopics queries the database for the topics of the rooms the user
+ * is a member of
+ * 
+ * @param {integer} userID the user's userID
+ * @returns {array} an array of topic objects
+ */
+async function getUserTopics(userID) {
+	console.log("getUserTopics:", userID);
+
+	// define our query
+	const query = {
+		text: `SELECT topic.* FROM topic
+			JOIN room ON topic.id = room.topic_id
 			JOIN room_member ON room.id = room_member.room_id
 			WHERE room_member.account_id = $1;`,
 		values: [userID],
