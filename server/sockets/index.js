@@ -1,4 +1,5 @@
 const pool = require("../modules/pool");
+const session = require('./session.socket');
 const messageHandler = require("./message.socket");
 const memberHandler = require("./member.socket");
 const topicHandler = require("./topic.socket");
@@ -13,6 +14,9 @@ async function rootSocketHandler(socket, io) {
   // grab our user id from the session
 	const {user} = socket.request.session.passport;
 	console.log(`User connected, id: ${user}`);
+
+	// session startup handler
+	socket.on("session.start", (data) => session.start(data, socket, io));
 
   // socket handlers
 	

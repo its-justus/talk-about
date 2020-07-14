@@ -5,7 +5,9 @@ import {takeEvery, takeLatest} from 'redux-saga/effects';
 function startSession(socket, action) {
 	try {
 		console.log("start session:", action);
-
+		// let server know we want to start our session. we are identified on the
+		// backend by our passport session (login) so no payload is needed
+		socket.emit("session.start")
 	} catch (error) {
 		console.log("start session error:", error);
 	}
