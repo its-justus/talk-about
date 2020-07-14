@@ -28,6 +28,8 @@ async function start(data, socket, io) {
 	for(let room of rooms){
 		room.members = await getRoomMembers(room.id);
 		room.history = await getRoomHistory(room.id);
+		socket.emit("room.joined", room);
+		socket.join(room.id);
 	}
 	console.log('run time (ms):', Date.now() - startTime);
 }
