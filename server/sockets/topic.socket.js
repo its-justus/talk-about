@@ -10,145 +10,13 @@ async function joinTopic(payload, socket, io) {
 
     // get room with topic that user can join (user not already in room)
     let room = await getRoom(topic, user);
-
+		console.log("joinTopic room:", room);
     // end our transaction
     pool.query("ROLLBACK");
   } catch (error) {
     pool.query("ROLLBACK");
     console.log("join topic error:", error);
   }
-  // let rooms = await getRooms(payload, user);
-  // let userObj = await getUser(socket.request.session.passport.user);
-  // console.log("rooms found:", rooms);
-
-  // if (rooms.length > 0) {
-  //   for (let room of rooms) {
-  //     console.log(`Room: `, room);
-  //     if (room.member_count < 3) {
-  //       console.log("space in room:", room.id);
-  //       const successful = await addUserToRoom(user, room.id);
-  //       if (successful) {
-  //         // TODO clean this up, its gonna be messy
-  //         const roomsIn = Object.keys(socket.rooms);
-  //         for (let roomIn of roomsIn) {
-  //           socket.leave(roomIn);
-  //         }
-
-  //         console.log(`User ${user} listening in room ${room.id}`);
-
-  //         socket.join(room.id);
-
-  //         const query = {};
-  //         query.text = `SELECT * FROM message
-  // 					WHERE room_id = $1
-  // 					ORDER BY created_at DESC
-  // 					LIMIT 10;`;
-  //         query.values = [room.id];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("message.refresh", query.result.rows);
-
-  //         query.text = `SELECT account.id, account.username FROM room_member
-  // 					JOIN account ON account.id = room_member.account_id
-  // 					WHERE room_id = $1
-  // 					ORDER BY account.username ASC;`;
-  //         query.values = [room.id];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("member.refresh", query.result.rows);
-  // 				io.to(room.id).emit("member.refresh", query.result.rows)
-
-  //         query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
-  // 					JOIN room_member ON room.id = room_member.room_id
-  // 					JOIN topic ON room.topic_id = topic.id
-  // 					WHERE room_member.account_id = $1;`;
-  //         query.values = [user];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("room.refresh", query.result.rows);
-
-  //         socket.emit("room.joined", room.id);
-  //         return;
-  //       } else {
-  //         // error adding the user to the room
-  //         console.log("error adding user to room");
-  //         socket.emit("room.error", "error joining room");
-  //         return;
-  //       }
-  //     }
-  //   }
-  //   // if we've gotten to this point that means there are no rooms with space
-  //   // for user, so we'll make a new one.
-  //   console.log("no rooms have space, adding room");
-  // 	const roomID = await makeRoomForUser(payload, user);
-
-  // 	const query = {};
-  //         query.text = `SELECT * FROM message
-  // 					WHERE room_id = $1
-  // 					ORDER BY created_at DESC
-  // 					LIMIT 10;`;
-  //         query.values = [room.id];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("message.refresh", query.result.rows);
-
-  //         query.text = `SELECT account.id, account.username FROM room_member
-  // 					JOIN account ON account.id = room_member.account_id
-  // 					WHERE room_id = $1
-  // 					ORDER BY account.username ASC;`;
-  //         query.values = [room.id];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("member.refresh", query.result.rows);
-  // 				io.to(room.id).emit("member.refresh", query.result.rows)
-
-  //         query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
-  // 					JOIN room_member ON room.id = room_member.room_id
-  // 					JOIN topic ON room.topic_id = topic.id
-  // 					WHERE room_member.account_id = $1;`;
-  //         query.values = [user];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("room.refresh", query.result.rows);
-
-  //   // then update our user via the socket
-  //   socket.emit("room.joined", roomID);
-  //   socket.join(roomID, () => {
-  //     console.log(`User ${user} joined room ${roomID}`);
-  //     io.to(roomID).emit("member.new", userObj);
-  //   });
-  // } else {
-  //   // otherwise if it's a new topic make a room for our user
-  //   console.log("no rooms found, adding room");
-  // 	const roomID = await makeRoomForUser(payload, user);
-
-  // 	const query = {};
-  //         query.text = `SELECT * FROM message
-  // 					WHERE room_id = $1
-  // 					ORDER BY created_at DESC
-  // 					LIMIT 10;`;
-  //         query.values = [room.id];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("message.refresh", query.result.rows);
-
-  //         query.text = `SELECT account.id, account.username FROM room_member
-  // 					JOIN account ON account.id = room_member.account_id
-  // 					WHERE room_id = $1
-  // 					ORDER BY account.username ASC;`;
-  //         query.values = [room.id];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("member.refresh", query.result.rows);
-  // 				io.to(room.id).emit("member.refresh", query.result.rows)
-
-  //         query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
-  // 					JOIN room_member ON room.id = room_member.room_id
-  // 					JOIN topic ON room.topic_id = topic.id
-  // 					WHERE room_member.account_id = $1;`;
-  //         query.values = [user];
-  //         query.result = await pool.query(query.text, query.values);
-  //         socket.emit("room.refresh", query.result.rows);
-
-  //   // then update our user via the socket
-  //   socket.emit("room.joined", roomID);
-  //   socket.join(roomID, () => {
-  //     console.log(`User ${user} joined room ${roomID}`);
-  //     io.to(roomID).emit("member.new", userObj);
-  //   });
-  // }
 }
 
 /**
@@ -163,7 +31,7 @@ async function joinTopic(payload, socket, io) {
  * @returns {roomObj} a room object the user will then join
  */
 async function getRoom(topic, uid) {
-  const MAX_MEMBER_COUNT = 7;
+  const MAX_MEMBER_COUNT = process.env.MAX_MEMBER_COUNT || 7;
   try {
     console.log("topic.getRoom");
 
@@ -174,7 +42,7 @@ async function getRoom(topic, uid) {
     // empty array. It also selects the oldest room, so older rooms get priority
     // when filling empty spots.
     const query = {};
-    query.text = `SELECT room.*, count(room_member)::INTEGER AS member_count FROM room
+    query.text = `SELECT room.* FROM room
 				JOIN topic ON topic.id = room.topic_id
 				JOIN room_member ON room_member.room_id = room.id
 				WHERE topic.name = $1 AND
@@ -192,13 +60,16 @@ async function getRoom(topic, uid) {
     // if we didn't get a room back, make one
     if (!room) {
 			console.log("getRoom no room");
-      room = await makeRoom(topic);
+			room = await makeRoom(topic);
+			room.topic_id = room.topic.id;
     } else { // otherwise get the rest of our room data
 			console.log("getRoom found room");
 			// save topic info
 			room.topic = {id: room.topic_id, name: topic};
 			// get room members
 			room.members = await getMembers(room.id);
+			// get room history
+			room.history = await getHistory(room.id);
 		}
 		
 		// return our room
@@ -208,13 +79,39 @@ async function getRoom(topic, uid) {
   }
 }
 
+/**
+ * getHistory queries the database for the message history of a given room
+ * 
+ * @param {integer} roomID the room id that we want the messages for
+ * @returns {array} an array of message objects
+ */
+async function getHistory(roomID) {
+	const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
+	try {
+		console.log("getHistory");
+		// define our query
+		const query = {};
+		query.text = `SELECT * FROM message
+			WHERE room_id = $1
+			ORDER BY created_at DESC
+			LIMIT $2;`;
+		query.values = [roomID, MAX_HISTORY_MESSAGES];
+		query.result = await pool.query(query.text, query.values);
+
+		// return our result
+		return query.result.rows;
+	} catch (error) {
+		console.log("getHistory error:", error);
+	}
+}
+
 // helper function to get a list of rooms with the specified topic as a their current topic
 // EXCLUDING rooms that the user is already a member of
 async function getRooms(topic, uid) {
   try {
     // select rooms with our topic as their current topic, and a count of the members
     // in that room cast as an integer
-    const queryText = `SELECT room.*, count(room_member)::INTEGER AS member_count FROM room
+    const queryText = `SELECT room.* FROM room
 		JOIN topic ON topic.id = room.topic_id
 		JOIN room_member ON room_member.room_id = room.id
 		WHERE topic.name = $1 AND
@@ -232,14 +129,20 @@ async function getRooms(topic, uid) {
   }
 }
 
-// helper function to get user info
+/**
+ * getUser queries the database for the full user information
+ * 
+ * @param {integer} userID the user's id
+ * @returns {userObj} a user object containing the user's information
+ */
 async function getUser(userID) {
   try {
-    const queryText = `SELECT id, username FROM account WHERE id = $1;`;
-    const queryValues = [userID];
-
-    const result = await pool.query(queryText, queryValues);
-    return result.rows;
+		console.log("getUser", userID);
+		const query = {};
+		query.text = `SELECT id, username FROM account WHERE id = $1;`;
+		query.values = [userID];
+		query.result = await pool.query(query.text, query.values);
+    return query.result.rows[0];
   } catch (error) {
     console.log("getRooms Error:", error);
   }
@@ -267,9 +170,21 @@ async function addUserToRoom(userID, roomID) {
  * @param {integer} roomID the id of the room we are joining
  * @returns {array} an array of member objects
  */
-function getMembers(roomID) {
+async function getMembers(roomID) {
 	try{
 		console.log("getMembers");
+
+		// define our query
+		const query = {};
+		query.text = `SELECT account.id, account.username FROM room_member
+			JOIN account ON account.id = room_member.account_id
+			WHERE room_id = $1
+			ORDER BY lower(account.username) ASC;`;
+		query.values = [roomID];
+		query.result = await pool.query(query.text, query.values);
+		
+		// return our results
+		return query.result.rows;
 	} catch (error) {
 		console.log("getMembers error:", error);
 	}
