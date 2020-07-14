@@ -1,18 +1,65 @@
 const pool = require("../modules/pool");
 
+/**
+ * OPTIMIZATION: this whole module holds a lot of potential for optimization.
+ * Typical runtimes are 15-30ms which is okay due to the infrequency of
+ * users actually joining rooms. The fact that all calls are async helps as well
+ * since we are not blocking other incoming calls or db calls. Only once there
+ * is a considerable number of users will this module begin to be a limiting factor.
+ *
+ * In any case, I'm marking it for optimization for future me. Hi future Ian!
+ * I hope this code doesn't make you cringe too hard :p
+ * - IJ 2020
+ */
+
+/**
+ * joinTopic handles placing the user into a room with a specified topic.
+ * the room may be an existing one that has spots open, or it may be a new
+ * room if there are no rooms with open spots. it sends a room.joined emit
+ * to the user upon completion, which contains all the data the user needs
+ * to display the room. updates are also sent to all room members so they
+ * have the new user's data
+ *
+ * @param {string} payload the topic sent with the request
+ * @param {socketObj} socket the socket created on connection. used to communicate with the user
+ * @param {ioObj} io the io object created on server startup. used to communicate with others in the room
+ * @returns {Promise} an empty promise that doesn't resolve to anything
+ */
 async function joinTopic(payload, socket, io) {
   try {
+		// initialize performance metric
+		const startTime = Date.now();
+		// pull our user id from our session
     const { user } = socket.request.session.passport;
-    const topic = payload;
-    console.log("joinTopic", payload);
+		// define our topic for readability
+		const topic = payload;
+		
     // begin our transaction
     pool.query("BEGIN");
 
     // get room with topic that user can join (user not already in room)
     let room = await getRoom(topic, user);
-		console.log("joinTopic room:", room);
-    // end our transaction
-    pool.query("ROLLBACK");
+
+    // get our user info
+    const userObj = await getUser(user);
+    // add our user to the member list
+    room.members.push(userObj);
+
+    // send our new room to the user
+    socket.emit("room.joined", room);
+    // add the user to the room in the database
+    addUserToRoom(userObj.id, room.id);
+    // add the user to the socket room
+    socket.join(room.id, () => {
+      // let others in the room know the user joined
+      io.to(room.id).emit("member.joined", userObj);
+    });
+
+    // end our transaction successfully
+		pool.query("ROLLBACK");
+
+		// log some performance data
+    console.log(`joinTopic runtime: ${Date.now() - startTime}ms`);
   } catch (error) {
     pool.query("ROLLBACK");
     console.log("join topic error:", error);
@@ -27,14 +74,13 @@ async function joinTopic(payload, socket, io) {
  * if no room is found that matches these criteria, a new room is created
  *
  * @param {string} topic the topic the user requested
- * @param {integer} uid the user's id (must be retrieved from session)
+ * @param {number} uid the user's id (must be retrieved from session)
  * @returns {roomObj} a room object the user will then join
  */
 async function getRoom(topic, uid) {
-  const MAX_MEMBER_COUNT = process.env.MAX_MEMBER_COUNT || 7;
+	// get our max member count from the environment, or default to 7
+	const MAX_MEMBER_COUNT = process.env.MAX_MEMBER_COUNT || 7;
   try {
-    console.log("topic.getRoom");
-
     // define our query
     // Our query selects a single room that has a topic matching our topic
     // param, fewer members that MAX_MEMBER_COUNT, and the user is not
@@ -53,110 +99,99 @@ async function getRoom(topic, uid) {
 				ORDER BY room.created_at ASC
 				LIMIT 1;`;
     query.values = [topic, uid, MAX_MEMBER_COUNT];
-
-    // submit our query and assign the first row to room
     query.result = await pool.query(query.text, query.values);
-    let room = query.result.rows[0];
+		
+		// assign our result
+		let room = query.result.rows[0];
+
     // if we didn't get a room back, make one
     if (!room) {
-			console.log("getRoom no room");
-			room = await makeRoom(topic);
-			room.topic_id = room.topic.id;
-    } else { // otherwise get the rest of our room data
-			console.log("getRoom found room");
-			// save topic info
-			room.topic = {id: room.topic_id, name: topic};
-			// get room members
-			room.members = await getMembers(room.id);
-			// get room history
-			room.history = await getHistory(room.id);
-		}
-		
-		// return our room
-		return room;
+      room = await makeRoom(topic);
+      room.topic_id = room.topic.id;
+    } else {
+      // otherwise get the rest of our room data
+      // save topic info
+      room.topic = { id: room.topic_id, name: topic };
+      // get room members
+      room.members = await getMembers(room.id);
+      // get room history
+      room.history = await getHistory(room.id);
+    }
+
+    // return our room
+    return room;
   } catch (error) {
     console.log("topic.getRoom error", error);
+    throw error;
   }
 }
 
 /**
  * getHistory queries the database for the message history of a given room
- * 
- * @param {integer} roomID the room id that we want the messages for
+ *
+ * @param {number} roomID the room id that we want the messages for
  * @returns {array} an array of message objects
  */
 async function getHistory(roomID) {
-	const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
-	try {
-		console.log("getHistory");
-		// define our query
-		const query = {};
-		query.text = `SELECT * FROM message
+  const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
+  try {
+    // define our query
+    const query = {};
+    query.text = `SELECT * FROM message
 			WHERE room_id = $1
 			ORDER BY created_at DESC
 			LIMIT $2;`;
-		query.values = [roomID, MAX_HISTORY_MESSAGES];
-		query.result = await pool.query(query.text, query.values);
+    query.values = [roomID, MAX_HISTORY_MESSAGES];
+    query.result = await pool.query(query.text, query.values);
 
-		// return our result
-		return query.result.rows;
-	} catch (error) {
-		console.log("getHistory error:", error);
-	}
-}
-
-// helper function to get a list of rooms with the specified topic as a their current topic
-// EXCLUDING rooms that the user is already a member of
-async function getRooms(topic, uid) {
-  try {
-    // select rooms with our topic as their current topic, and a count of the members
-    // in that room cast as an integer
-    const queryText = `SELECT room.* FROM room
-		JOIN topic ON topic.id = room.topic_id
-		JOIN room_member ON room_member.room_id = room.id
-		WHERE topic.name = $1 AND
-		room.id NOT IN
-			(SELECT room_id FROM room_member
-				WHERE account_id = $2)
-		GROUP BY room.id;`;
-    const queryValues = [topic, uid];
-
-    const result = await pool.query(queryText, queryValues);
-    console.log(queryText, queryValues);
-    return result.rows;
+    // return our result
+    return query.result.rows;
   } catch (error) {
-    console.log("getRooms Error:", error);
+    console.log("getHistory error:", error);
+    throw error;
   }
 }
 
 /**
  * getUser queries the database for the full user information
- * 
- * @param {integer} userID the user's id
+ *
+ * @param {number} userID the user's id
  * @returns {userObj} a user object containing the user's information
  */
 async function getUser(userID) {
   try {
-		console.log("getUser", userID);
-		const query = {};
-		query.text = `SELECT id, username FROM account WHERE id = $1;`;
-		query.values = [userID];
-		query.result = await pool.query(query.text, query.values);
-    return query.result.rows[0];
+		// define our query
+    const query = {};
+    query.text = `SELECT id, username FROM account WHERE id = $1;`;
+    query.values = [userID];
+    query.result = await pool.query(query.text, query.values);
+		
+		// return our result
+		return query.result.rows[0];
   } catch (error) {
     console.log("getRooms Error:", error);
+    throw error;
   }
 }
 
-async function addUserToRoom(userID, roomID) {
+/**
+ * addUserToRoom adds the user to the room in the database
+ *
+ * @param {number} userID the user's id
+ * @param {number} roomID the room id that we are adding the user to
+ * @returns null
+ */
+function addUserToRoom(userID, roomID) {
   try {
-    console.log("adding user to room", { userID, roomID });
-    const queryText = `INSERT INTO room_member (account_id, room_id)
-			VALUES ($1, $2)
-			RETURNING *;`;
-    const queryValues = [userID, roomID];
-
-    return await pool.query(queryText, queryValues);
+    // define our query
+    const query = {};
+    query.text = `INSERT INTO room_member (account_id, room_id)
+			VALUES ($1, $2);`;
+    query.values = [userID, roomID];
+    query.result = pool.query(query.text, query.values);
+		
+		// return null since we don't have any data
+		return null;
   } catch (error) {
     console.log("getRooms Error:", error);
     throw error;
@@ -166,28 +201,27 @@ async function addUserToRoom(userID, roomID) {
 /**
  * getMembers queries the database for the members of the room the user
  * is about to join
- * 
- * @param {integer} roomID the id of the room we are joining
+ *
+ * @param {number} roomID the id of the room we are joining
  * @returns {array} an array of member objects
  */
 async function getMembers(roomID) {
-	try{
-		console.log("getMembers");
-
-		// define our query
-		const query = {};
-		query.text = `SELECT account.id, account.username FROM room_member
+  try {
+    // define our query
+    const query = {};
+    query.text = `SELECT account.id, account.username FROM room_member
 			JOIN account ON account.id = room_member.account_id
 			WHERE room_id = $1
 			ORDER BY lower(account.username) ASC;`;
-		query.values = [roomID];
-		query.result = await pool.query(query.text, query.values);
-		
-		// return our results
-		return query.result.rows;
-	} catch (error) {
-		console.log("getMembers error:", error);
-	}
+    query.values = [roomID];
+    query.result = await pool.query(query.text, query.values);
+
+    // return our results
+    return query.result.rows;
+  } catch (error) {
+    console.log("getMembers error:", error);
+    throw error;
+  }
 }
 
 /**
@@ -198,7 +232,6 @@ async function getMembers(roomID) {
  */
 async function makeRoom(topic) {
   try {
-    console.log("makeRoom", topic);
     // define our room object
     const room = {};
 
@@ -216,7 +249,8 @@ async function makeRoom(topic) {
 			RETURNING *;`;
     query.values = [room.topic.id];
     query.result = await pool.query(query.text, query.values);
-    // add our new room data to the room object
+		
+		// add our new room data to the room object
     room.id = query.result.rows[0].id;
     room.created_at = query.result.rows[0].created_at;
 
@@ -224,72 +258,8 @@ async function makeRoom(topic) {
     return room;
   } catch (error) {
     console.log("makeRoom error:", error);
+    throw error;
   }
-
-  // try {
-  //   console.log("makeRoomForUser", { topic, userID });
-  //   const query = {};
-
-  //   // begin our transaction
-  //   await pool.query("BEGIN");
-
-  //   // first get the topic id if it exists for our topic
-  //   query.text = `SELECT id FROM topic WHERE name = $1;`;
-  //   query.values = [topic];
-  //   query.result = await pool.query(query.text, query.values);
-
-  //   console.log("select topics successfull", query.result.rows);
-
-  //   // if we got a topic id back
-  //   if (query.result.rowCount > 0) {
-  //     // make a new room for that topic
-  //     const topicID = query.result.rows[0].id;
-  //     query.text = `INSERT INTO room (topic_id)
-  // 			VALUES ($1)
-  // 			RETURNING *;`;
-  //     query.values = [topicID];
-  //     query.result = await pool.query(query.text, query.values);
-
-  //     console.log("insert room successfull", query.result.rows[0]);
-
-  // 		console.log("insert row: ", query.result.rows);
-  // 		await addUserToRoom(userID, query.result.rows[0].id)
-  // 		pool.query("COMMIT");
-  // 		return query.result.rows[0].id;
-  //     // then add the user to that room
-  //     // await addUserToRoom(userID, topicID);
-  //   } else {
-  //     // otherwise first make a new topic
-  //     query.text = `INSERT INTO topic (name)
-  // 			VALUES ($1)
-  // 			RETURNING *;`;
-  //     query.values = [topic];
-  //     query.result = await pool.query(query.text, query.values);
-
-  //     console.log("insert topic successfull", query.result.rows[0]);
-
-  //     // then make a room for that topic
-  //     query.text = `INSERT INTO room (topic_id)
-  // 			VALUES ($1)
-  // 			RETURNING *;`;
-  //     query.values = [query.result.rows[0].id];
-  //     query.result = await pool.query(query.text, query.values);
-  //     console.log("insert room successfull", query.result.rows[0]);
-
-  //     // then add our user to the room
-  //     await addUserToRoom(userID, query.result.rows[0].id);
-
-  //     // commit our changes
-  //     await pool.query("COMMIT");
-
-  //     // finally return our new room id
-  //     return query.result.rows[0].id;
-  //   }
-  // } catch (error) {
-  //   // if we get an error, rollback our transaction
-  //   pool.query("ROLLBACK");
-  //   throw error;
-  // }
 }
 
 /**
@@ -301,13 +271,13 @@ async function makeRoom(topic) {
  */
 async function getTopic(topic) {
   try {
+    // OPTIMIZATION: combine this into one query. pretty sure this is doable
     // first get the topic if it exists
     const query = {};
     query.text = `SELECT * FROM topic WHERE name = $1;`;
     query.values = [topic];
     query.result = await pool.query(query.text, query.values);
     let topicObj = query.result.rows[0];
-    console.log("topic: ", topic);
 
     // if the topic doesn't exist, create it
     if (!topicObj) {
@@ -320,10 +290,10 @@ async function getTopic(topic) {
     }
 
     // return the topic
-    console.log("topicObj:", topicObj);
     return topicObj;
   } catch (error) {
     console.log("getTopic error:", error);
+    throw error;
   }
 }
 
