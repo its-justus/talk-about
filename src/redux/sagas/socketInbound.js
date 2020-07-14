@@ -62,6 +62,11 @@ function socketChannel(socket) {
 			console.log("Popular topics:", data);
 		})
 
+		// server letting us know our session is all ready
+		socket.on('session.ready', (data) => {
+			console.log("Session ready, hooray!");
+		})
+
 		// we need to return a unsubscriber function that handles any necessary cleanup
 		// since we don't need any cleanup we just pass an empty function
 		return () => {};
