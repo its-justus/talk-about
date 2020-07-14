@@ -17,10 +17,9 @@ function connect() {
   });
 }
 
-function disconnect(arg) {
+function disconnect(socket) {
 	console.log("Closing socket");
-	clearInterval(arg.heartbeat)
-	arg.socket.close();
+	socket.close();
 }
 
 //
@@ -36,17 +35,16 @@ export function* openSocket() {
   yield fork(inbound, socket);
 	yield fork(outbound, socket);
 	
+	// start our session with the server
+	yield put({type: "SESSION_START"});
 	// get user's rooms
 	yield put({type: "GET_ROOMS"});
 	// get members for current room
 	yield put({type: "GET_MEMBERS"});
 	// get messages for current room
 	yield put({type: "GET_MESSAGES"});
-	// set up a heartbeat to keep the socket open
-	const heartbeat = setInterval(() => {
-		socket.emit('heartbeat');
-	}, 19*1000); 
+	
 	// pass our disconnect saga
-	yield takeLeading("CLOSE_SOCKET", disconnect, {socket, heartbeat});
+	yield takeLeading("CLOSE_SOCKET", disconnect, socket);
 	}
 }
