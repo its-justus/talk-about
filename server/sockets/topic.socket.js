@@ -1,141 +1,164 @@
 const pool = require("../modules/pool");
 
 async function joinTopic(payload, socket, io) {
-  const { user } = socket.request.session.passport;
-  console.log("joinTopic", payload);
+	const { user } = socket.request.session.passport;
+	const topic = payload;
+	console.log("joinTopic", payload);
+	
+	// get room with topic that user can join (user not already in room)
+	let room = await getRoom(topic, user);
 
-  let rooms = await getRooms(payload, user);
-  let userObj = await getUser(socket.request.session.passport.user);
-  console.log("rooms found:", rooms);
+  // let rooms = await getRooms(payload, user);
+  // let userObj = await getUser(socket.request.session.passport.user);
+  // console.log("rooms found:", rooms);
 
-  if (rooms.length > 0) {
-    for (let room of rooms) {
-      console.log(`Room: `, room);
-      if (room.member_count < 3) {
-        console.log("space in room:", room.id);
-        const successful = await addUserToRoom(user, room.id);
-        if (successful) {
-          // TODO clean this up, its gonna be messy
-          const roomsIn = Object.keys(socket.rooms);
-          for (let roomIn of roomsIn) {
-            socket.leave(roomIn);
-          }
+  // if (rooms.length > 0) {
+  //   for (let room of rooms) {
+  //     console.log(`Room: `, room);
+  //     if (room.member_count < 3) {
+  //       console.log("space in room:", room.id);
+  //       const successful = await addUserToRoom(user, room.id);
+  //       if (successful) {
+  //         // TODO clean this up, its gonna be messy
+  //         const roomsIn = Object.keys(socket.rooms);
+  //         for (let roomIn of roomsIn) {
+  //           socket.leave(roomIn);
+  //         }
 
-          console.log(`User ${user} listening in room ${room.id}`);
+  //         console.log(`User ${user} listening in room ${room.id}`);
 
-          socket.join(room.id);
+  //         socket.join(room.id);
 
-          const query = {};
-          query.text = `SELECT * FROM message 
-						WHERE room_id = $1
-						ORDER BY created_at DESC
-						LIMIT 10;`;
-          query.values = [room.id];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("message.refresh", query.result.rows);
+  //         const query = {};
+  //         query.text = `SELECT * FROM message 
+	// 					WHERE room_id = $1
+	// 					ORDER BY created_at DESC
+	// 					LIMIT 10;`;
+  //         query.values = [room.id];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("message.refresh", query.result.rows);
 
-          query.text = `SELECT account.id, account.username FROM room_member
-						JOIN account ON account.id = room_member.account_id
-						WHERE room_id = $1
-						ORDER BY account.username ASC;`;
-          query.values = [room.id];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("member.refresh", query.result.rows);
-					io.to(room.id).emit("member.refresh", query.result.rows)
+  //         query.text = `SELECT account.id, account.username FROM room_member
+	// 					JOIN account ON account.id = room_member.account_id
+	// 					WHERE room_id = $1
+	// 					ORDER BY account.username ASC;`;
+  //         query.values = [room.id];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("member.refresh", query.result.rows);
+	// 				io.to(room.id).emit("member.refresh", query.result.rows)
 
-          query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
-						JOIN room_member ON room.id = room_member.room_id
-						JOIN topic ON room.topic_id = topic.id
-						WHERE room_member.account_id = $1;`;
-          query.values = [user];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("room.refresh", query.result.rows);
+  //         query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
+	// 					JOIN room_member ON room.id = room_member.room_id
+	// 					JOIN topic ON room.topic_id = topic.id
+	// 					WHERE room_member.account_id = $1;`;
+  //         query.values = [user];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("room.refresh", query.result.rows);
 
-          socket.emit("room.joined", room.id);
-          return;
-        } else {
-          // error adding the user to the room
-          console.log("error adding user to room");
-          socket.emit("room.error", "error joining room");
-          return;
-        }
-      }
-    }
-    // if we've gotten to this point that means there are no rooms with space
-    // for user, so we'll make a new one.
-    console.log("no rooms have space, adding room");
-		const roomID = await makeRoomForUser(payload, user);
+  //         socket.emit("room.joined", room.id);
+  //         return;
+  //       } else {
+  //         // error adding the user to the room
+  //         console.log("error adding user to room");
+  //         socket.emit("room.error", "error joining room");
+  //         return;
+  //       }
+  //     }
+  //   }
+  //   // if we've gotten to this point that means there are no rooms with space
+  //   // for user, so we'll make a new one.
+  //   console.log("no rooms have space, adding room");
+	// 	const roomID = await makeRoomForUser(payload, user);
 		
-		const query = {};
-          query.text = `SELECT * FROM message 
-						WHERE room_id = $1
-						ORDER BY created_at DESC
-						LIMIT 10;`;
-          query.values = [room.id];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("message.refresh", query.result.rows);
+	// 	const query = {};
+  //         query.text = `SELECT * FROM message 
+	// 					WHERE room_id = $1
+	// 					ORDER BY created_at DESC
+	// 					LIMIT 10;`;
+  //         query.values = [room.id];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("message.refresh", query.result.rows);
 
-          query.text = `SELECT account.id, account.username FROM room_member
-						JOIN account ON account.id = room_member.account_id
-						WHERE room_id = $1
-						ORDER BY account.username ASC;`;
-          query.values = [room.id];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("member.refresh", query.result.rows);
-					io.to(room.id).emit("member.refresh", query.result.rows)
+  //         query.text = `SELECT account.id, account.username FROM room_member
+	// 					JOIN account ON account.id = room_member.account_id
+	// 					WHERE room_id = $1
+	// 					ORDER BY account.username ASC;`;
+  //         query.values = [room.id];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("member.refresh", query.result.rows);
+	// 				io.to(room.id).emit("member.refresh", query.result.rows)
 
-          query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
-						JOIN room_member ON room.id = room_member.room_id
-						JOIN topic ON room.topic_id = topic.id
-						WHERE room_member.account_id = $1;`;
-          query.values = [user];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("room.refresh", query.result.rows);
+  //         query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
+	// 					JOIN room_member ON room.id = room_member.room_id
+	// 					JOIN topic ON room.topic_id = topic.id
+	// 					WHERE room_member.account_id = $1;`;
+  //         query.values = [user];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("room.refresh", query.result.rows);
 
-    // then update our user via the socket
-    socket.emit("room.joined", roomID);
-    socket.join(roomID, () => {
-      console.log(`User ${user} joined room ${roomID}`);
-      io.to(roomID).emit("member.new", userObj);
-    });
-  } else {
-    // otherwise if it's a new topic make a room for our user
-    console.log("no rooms found, adding room");
-		const roomID = await makeRoomForUser(payload, user);
+  //   // then update our user via the socket
+  //   socket.emit("room.joined", roomID);
+  //   socket.join(roomID, () => {
+  //     console.log(`User ${user} joined room ${roomID}`);
+  //     io.to(roomID).emit("member.new", userObj);
+  //   });
+  // } else {
+  //   // otherwise if it's a new topic make a room for our user
+  //   console.log("no rooms found, adding room");
+	// 	const roomID = await makeRoomForUser(payload, user);
 		
-		const query = {};
-          query.text = `SELECT * FROM message 
-						WHERE room_id = $1
-						ORDER BY created_at DESC
-						LIMIT 10;`;
-          query.values = [room.id];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("message.refresh", query.result.rows);
+	// 	const query = {};
+  //         query.text = `SELECT * FROM message 
+	// 					WHERE room_id = $1
+	// 					ORDER BY created_at DESC
+	// 					LIMIT 10;`;
+  //         query.values = [room.id];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("message.refresh", query.result.rows);
 
-          query.text = `SELECT account.id, account.username FROM room_member
-						JOIN account ON account.id = room_member.account_id
-						WHERE room_id = $1
-						ORDER BY account.username ASC;`;
-          query.values = [room.id];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("member.refresh", query.result.rows);
-					io.to(room.id).emit("member.refresh", query.result.rows)
+  //         query.text = `SELECT account.id, account.username FROM room_member
+	// 					JOIN account ON account.id = room_member.account_id
+	// 					WHERE room_id = $1
+	// 					ORDER BY account.username ASC;`;
+  //         query.values = [room.id];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("member.refresh", query.result.rows);
+	// 				io.to(room.id).emit("member.refresh", query.result.rows)
 
-          query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
-						JOIN room_member ON room.id = room_member.room_id
-						JOIN topic ON room.topic_id = topic.id
-						WHERE room_member.account_id = $1;`;
-          query.values = [user];
-          query.result = await pool.query(query.text, query.values);
-          socket.emit("room.refresh", query.result.rows);
+  //         query.text = `SELECT room.*, topic.name AS topic, topic.id AS topic_id FROM room
+	// 					JOIN room_member ON room.id = room_member.room_id
+	// 					JOIN topic ON room.topic_id = topic.id
+	// 					WHERE room_member.account_id = $1;`;
+  //         query.values = [user];
+  //         query.result = await pool.query(query.text, query.values);
+  //         socket.emit("room.refresh", query.result.rows);
 
-    // then update our user via the socket
-    socket.emit("room.joined", roomID);
-    socket.join(roomID, () => {
-      console.log(`User ${user} joined room ${roomID}`);
-      io.to(roomID).emit("member.new", userObj);
-    });
-  }
+  //   // then update our user via the socket
+  //   socket.emit("room.joined", roomID);
+  //   socket.join(roomID, () => {
+  //     console.log(`User ${user} joined room ${roomID}`);
+  //     io.to(roomID).emit("member.new", userObj);
+  //   });
+  // }
+}
+
+/**
+ * getRoom queries the database for a room that meets the following criteria
+ * 1. the current topic matches topic
+ * 2. has fewer members that the maximum member limit
+ * 3. the user is not already a member of that room
+ * if no room is found that matches these criteria, a new room is created
+ * 
+ * @param {string} topic the topic the user requested
+ * @param {integer} uid the user's id (must be retrieved from session)
+ * @returns {roomObj} a room object the user will then join
+ */
+async function getRoom(topic, uid) {
+	try {
+		console.log("topic.getRoom");
+	} catch (error) {
+		console.log("topic.getRoom error", error);
+	}
 }
 
 // helper function to get a list of rooms with the specified topic as a their current topic
