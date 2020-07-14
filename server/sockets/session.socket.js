@@ -18,7 +18,7 @@ const pool = require("../modules/pool");
  */
 async function start(data, socket, io) {
   try {
-		// initialize our performance metric
+    // initialize our performance metric
     const startTime = Date.now();
     // pull our user id from our passport session
     const { user } = socket.request.session.passport;
@@ -47,34 +47,36 @@ async function start(data, socket, io) {
     // let the client know we're all done
     socket.emit("session.ready");
 
-		// log some performance data
+    // log some performance data
     console.log("run time (ms):", Date.now() - startTime);
   } catch (error) {
-		console.log("session.start error:", error);
-	}
+    console.log("session.start error:", error);
+  }
 }
 
 /**
- * getUserRooms is a helper function that queries the database for the rooms the
- * user is a member of
+ * getUserRooms queries the database for all the rooms that a user is a
+ * member of.
  *
- * @param {integer} userID the user's userID
+ * @param {number} userID the user's userID
  * @returns {array} an array of room objects
  */
 async function getUserRooms(userID) {
-  //console.log("getUserRooms:", userID);
-
-  // define our query
-  const query = {
-    text: `SELECT room.* FROM room
+  try {
+    // define our query
+    const query = {};
+    query.text = `SELECT room.* FROM room
 			JOIN room_member ON room.id = room_member.room_id
-			WHERE room_member.account_id = $1;`,
-    values: [userID],
-  };
-  // submit query to pool
-  query.result = await pool.query(query.text, query.values);
-  //console.log("query result:",query.result.rows);
-  return query.result.rows;
+			WHERE room_member.account_id = $1;`;
+    query.values = [userID];
+    query.result = await pool.query(query.text, query.values);
+
+		// return our result
+    return query.result.rows;
+  } catch (error) {
+    console.log("getUserRooms error:", error);
+    throw error;
+  }
 }
 
 /**
@@ -87,9 +89,9 @@ async function getTopic(topicID) {
   try {
     // define our query
     const query = {};
-    (query.text = `SELECT topic.* FROM topic
-		WHERE topic.id = $1;`),
-      (query.values = [topicID]);
+    query.text = `SELECT topic.* FROM topic
+			WHERE topic.id = $1;`;
+    query.values = [topicID];
     query.result = await pool.query(query.text, query.values);
 
     // return our result
