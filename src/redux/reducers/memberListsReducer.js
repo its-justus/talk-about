@@ -21,8 +21,8 @@ const memberListsReducer = (state = {}, action) => {
 			newState = {...action.payload};
 			return newState;
 		case 'ADD_MEMBER_LIST':
-			// action.payload = {roomID: integer, members:[memberListArray]} 
-			newState[action.payload.roomID] = action.payload.members;
+			// action.payload = {room: integer, members:[memberListArray]} 
+			newState[action.payload.room] = action.payload.members;
 			return newState;
 		case 'ADD_MEMBER_TO_ROOM':
 			// action.payload = {room: integer, member: memberObject}
