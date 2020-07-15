@@ -71,7 +71,7 @@ async function getUserRooms(userID) {
     query.values = [userID];
     query.result = await pool.query(query.text, query.values);
 
-		// return our result
+    // return our result
     return query.result.rows;
   } catch (error) {
     console.log("getUserRooms error:", error);
@@ -105,23 +105,25 @@ async function getTopic(topicID) {
 /**
  * getRoomMembers queries the database for the room members of a specific room
  *
- * @param {integer} roomID the id of the room to get the members for
+ * @param {number} roomID the id of the room to get the members for
  * @returns {array} an array of account objects
  */
 async function getRoomMembers(roomID) {
-  //console.log("getRoomMembers:", roomID);
-
-  // define our query
-  const query = {
-    text: `SELECT account.id, account.username FROM account
+  try {
+    // define our query
+    const query = {};
+		query.text = `SELECT account.id, account.username FROM account
 			JOIN room_member ON account.id = room_member.account_id
-			WHERE room_member.room_id = $1;`,
-    values: [roomID],
-  };
-  // submit query to pool
-  query.result = await pool.query(query.text, query.values);
-  //console.log("query result:",query.result.rows);
-  return query.result.rows;
+			WHERE room_member.room_id = $1;`;
+		query.values = [roomID]
+    query.result = await pool.query(query.text, query.values);
+
+		// return our results
+    return query.result.rows;
+  } catch (error) {
+    console.log("getRoomMembers error:", error);
+    throw error;
+  }
 }
 
 /**
