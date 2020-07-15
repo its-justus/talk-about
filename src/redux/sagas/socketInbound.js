@@ -65,6 +65,7 @@ function socketChannel(socket) {
 		// server letting us know our session is all ready
 		socket.on('session.ready', (data) => {
 			console.log("Session ready, hooray!");
+			dispatch({type: "SET_STATUS", payload: "OKAY"})
 		})
 
 		// we need to return a unsubscriber function that handles any necessary cleanup

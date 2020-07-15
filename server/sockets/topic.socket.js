@@ -6,6 +6,7 @@ const pool = require("../modules/pool");
  * users actually joining rooms. The fact that all calls are async helps as well
  * since we are not blocking other incoming calls or db calls. Only once there
  * is a considerable number of users will this module begin to be a limiting factor.
+ * Though increased database sized might make this happen sooner rather than later.
  *
  * In any case, I'm marking it for optimization for future me. Hi future Ian!
  * I hope this code doesn't make you cringe too hard :p
