@@ -78,7 +78,7 @@ function deleteMessage(payload, socket, io) {
         .then((res) => {
           console.log("message deleted");
           // tell all members of room to remove the message
-          io.to(result.room_id).emit("message.remove", result);
+          io.to(result.rows[0].room_id).emit("message.remove", result.rows[0]);
         })
         .catch((error) => {
           socket.emit("message.error", "error deleting message");

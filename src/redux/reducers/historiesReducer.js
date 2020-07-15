@@ -27,7 +27,7 @@ const historiesReducer = (state = {}, action) => {
       return newState;
     case "ADD_HISTORY":
       // action.payload = {roomID: integer, history:[historyArray]}
-      newState[action.payload.roomID] = action.payload.history;
+      newState[action.payload.roomID] = action.payload.history.reverse();
       return newState;
     case "ADD_MESSAGE":
       // action.payload = {messageObject}
@@ -53,6 +53,7 @@ const historiesReducer = (state = {}, action) => {
     case "REMOVE_MESSAGE":
 			// action.payload = {messageObject}
 			// get the history for the message the room is in
+			console.log("REMOVE_MESSAGE payload", action.payload);
 			history = newState[action.payload.room_id]; 
 			// remove the message from that history
 			history = history.filter((cur) => cur.id !== action.payload.id);
