@@ -7,6 +7,7 @@ import messages from "./messagesReducer";
 import topics from "./topicsReducer";
 import rooms from "./roomsReducer";
 import currentRoom from "./currentRoomReducer";
+import status from "./statusReducer";
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   messages, // messages for current room
   topics, // popular topics based on users current filter settings
   rooms, // rooms which the user is a member of
-  currentRoom, // the current room the user is participating in
+	currentRoom, // the current room the user is participating in
+	status, // the current status of the app
 });
 
 export default rootReducer;

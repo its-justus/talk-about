@@ -11,25 +11,28 @@ class Main extends React.Component {
   render() {
     return (
       <div>
-        <Grid container justify="center">
-          <Hidden xsDown>
-            <Grid item name="left-section">
-              <Box width={200}>
-                <TopicExplorer />
-              </Box>
+        {this.props.status === "STARTING" && "Loading..."}
+        {this.props.status === "OKAY" && (
+          <Grid container justify="center">
+            <Hidden xsDown>
+              <Grid item name="left-section">
+                <Box width={200}>
+                  <TopicExplorer />
+                </Box>
+              </Grid>
+            </Hidden>
+            <Grid item name="center-section" xs>
+              <Chat />
             </Grid>
-          </Hidden>
-          <Grid item name="center-section" xs>
-            <Chat />
+            <Hidden xsDown>
+              <Grid item name="right-section">
+                <Box width={200}>
+                  <MemberList />
+                </Box>
+              </Grid>
+            </Hidden>
           </Grid>
-          <Hidden xsDown>
-            <Grid item name="right-section">
-              <Box width={200}>
-                <MemberList />
-              </Box>
-            </Grid>
-          </Hidden>
-        </Grid>
+        )}
       </div>
     );
   }
@@ -40,6 +43,7 @@ class Main extends React.Component {
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
   user: state.user,
+  status: state.status,
 });
 
 export default connect(mapStateToProps)(Main);
