@@ -37,12 +37,6 @@ export function* openSocket() {
 	
 	// start our session with the server
 	yield put({type: "SESSION_START"});
-	// get user's rooms
-	yield put({type: "GET_ROOMS"});
-	// get members for current room
-	yield put({type: "GET_MEMBERS"});
-	// get messages for current room
-	yield put({type: "GET_MESSAGES"});
 	
 	// pass our disconnect saga
 	yield takeLeading("CLOSE_SOCKET", disconnect, socket);

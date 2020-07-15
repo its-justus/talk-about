@@ -31,8 +31,9 @@ const historiesReducer = (state = {}, action) => {
       return newState;
     case "ADD_MESSAGE":
       // action.payload = {messageObject}
-      history = newState[action.payload.room_id];
-      newState[action.payload.room_id] = history.push(action.payload);
+			history = [...newState[action.payload.room_id]];
+			history.push(action.payload)
+      newState[action.payload.room_id] = history;
       return newState;
     case "UPDATE_MESSAGE":
 			// action.payload = {messageObject}
