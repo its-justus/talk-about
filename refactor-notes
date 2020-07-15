@@ -58,19 +58,19 @@ _____BACKEND_____
 [x] - on OPEN_SOCKET saga, socket.emit(session.startup) to request data from server
 [x] - add statusReducer. this stores the status of the session. set to "OKAY" on session ready. 
 	[x] - add socket.on(session.ready) to handle this change. it should dispatch SET_STATUS, payload: 'OKAY'
-[ ] - add conditional render to Main.js to show a loading spinner until state.status is "OKAY"
-[ ] - change socket.on(room.joined) to send data as payload
-[ ] - socket.on(room.joined) saga
-	[ ] - dispatch(ADD_ROOM, {id, created_at, topic_id})
-		[ ] - in roomsReducer, add object to state(array)
-	[ ] - dispatch(ADD_TOPIC, {topic_id, topic})
-		[ ] - in topicsReducer, add topic to newState(object) as newState[topic_id] = topic
+[x] - add conditional render to Main.js to show a loading spinner until state.status is "OKAY"
+[x] - change socket.on(room.joined) to send data as payload
+[x] - socket.on(room.joined) saga
+	[x] - dispatch(ADD_ROOM, {id, created_at, topic_id})
+		[x] - in roomsReducer, add object to state(array)
+	[x] - dispatch(ADD_TOPIC, {topic_id, topic})
+		[x] - in topicsReducer, add topic to newState(object) as newState[topic_id] = topic
 			- eg. the idea is to make the topic name accessible as state.topics[7] to get the text version of topic id 7
-	[ ] - dispatch(ADD_MEMBER_LIST, {room_id, [room.members]})
-		[ ] - in memberListsReducer[NEW], add member list to newState(object) as newState[room_id] = room.members
+	[x] - dispatch(ADD_MEMBER_LIST, {room_id, [room.members]})
+		[x] - in memberListsReducer[NEW], add member list to newState(object) as newState[room_id] = room.members
 			- the idea is to make the whole list of members for room 42 available at state.memberLists[42]
-	[ ] - dispatch(ADD_HISTORY, {room_id, [room.history]}) 
-		[ ] - in historiesReducer[NEW], add history to newState(object) as newState[room_id] = room.history
+	[x] - dispatch(ADD_HISTORY, {room_id, [room.history]}) 
+		[x] - in historiesReducer[NEW], add history to newState(object) as newState[room_id] = room.history
 			- the idea is to make the message history for room 42 available at state.histories[42]
 
 [ ] - remove messages saga and reducer, change histories reducer to handle socketInbound dispatches

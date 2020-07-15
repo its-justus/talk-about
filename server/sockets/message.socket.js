@@ -33,16 +33,17 @@ function edit(payload, socket, io) {
     if (result.rows[0] && result.rows[0].author_id === user) {
 			queryText = `UPDATE message
 			SET text = $1 
-			WHERE id= $2
+			WHERE id = $2
 			RETURNING *;`;
 			queryValues = [payload.text, payload.id];
       // TODO ADD ROOM SPECIFIER TO queryValues
       pool
         .query(queryText, queryValues)
-        .then((result) => {
+        .then((res) => {
+					let message = res.rows[0];
           console.log("message updated");
-          // TODO add room specifier to remove this message only from this room
-          io.emit("message.update", result.rows[0]);
+          // let all members of room know to update the message
+          io.to(message.room_id).emit("message.update", message);
         })
         .catch((error) => {
           socket.emit("message.error", "error deleting message");
@@ -71,13 +72,13 @@ function deleteMessage(payload, socket, io) {
     if (result.rows[0] && result.rows[0].author_id === user) {
       queryText = `DELETE FROM message 
 			WHERE id= $1;`;
-      // TODO ADD ROOM SPECIFIER TO queryValues
+
       pool
         .query(queryText, queryValues)
-        .then((result) => {
+        .then((res) => {
           console.log("message deleted");
-          // TODO add room specifier to remove this message only from this room
-          io.emit("message.remove", payload);
+          // tell all members of room to remove the message
+          io.to(result.room_id).emit("message.remove", result);
         })
         .catch((error) => {
           socket.emit("message.error", "error deleting message");
