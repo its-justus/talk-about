@@ -38,22 +38,28 @@ const historiesReducer = (state = {}, action) => {
     case "UPDATE_MESSAGE":
 			// action.payload = {messageObject}
 			// get the history for the room the message is in
-			history = newState[action.payload.room_id];
+			console.log("UPDATE_MESSAGE",action.payload);
+			history = [...newState[action.payload.room_id]];
+			console.log("HISTORY:", history);
       // search through our current history newest to oldest for a message id matching our payload
-      for (let i = history.length - 1; i <= 0; i--) {
+      for (let i = history.length - 1; i >= 0; i--) {
+				console.log(`HISTORY INDEX: ${i}, MESSAGE:`, history[i]);
         if (history[i].id === action.payload.id) {
+					console.log("FOUND MESSAGE");
           // if we find it, swap in the new message and break the loop
 					history[i] = {...action.payload};
+					console.log("NEW HISTORY:", history);
 					// put our new history back into our histories
 					newState[action.payload.room_id] = history;
+					console.log("NEW STATE:", newState);
           break;
         }
-      }
+			}
+			console.log("EXITED LOOP, JUST BEFORE RETURN");
       return newState;
     case "REMOVE_MESSAGE":
 			// action.payload = {messageObject}
 			// get the history for the message the room is in
-			console.log("REMOVE_MESSAGE payload", action.payload);
 			history = newState[action.payload.room_id]; 
 			// remove the message from that history
 			history = history.filter((cur) => cur.id !== action.payload.id);
