@@ -71,7 +71,7 @@ function socketChannel(socket) {
       // add the room history to the histories reducer
       dispatch({
         type: "ADD_HISTORY",
-        payload: { room: data.id, history: data.history },
+        payload: { roomID: data.id, history: data.history },
       });
       // add the room members to the memberLists reducer
       dispatch({
