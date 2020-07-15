@@ -28,6 +28,11 @@ const historiesReducer = (state = {}, action) => {
 			// action.payload = {roomID: integer, history:[historyArray]} 
 			newState[action.payload.roomID] = action.payload.history;
 			return newState;
+		case 'ADD_MESSAGE':
+			// action.payload = {messageObject}
+			let history = newState[action.payload.room_id];
+			newState[action.payload.room_id] = history.push(action.payload);
+			return newState;
 		case 'RESET_HISTORIES':
 			return [];
 		default:
