@@ -36,9 +36,10 @@ class TopicExplorer extends React.Component {
         >
           Refresh
         </button>
-        {this.props.topics?.map((cur, i) => (
+				{/* TODO update this to show popular topics */}
+        {/* {this.props.topics?.map((cur, i) => (
           <p key={`topic-${i}`}>{cur.name}</p>
-        ))}
+        ))} */}
         My Rooms:
         {this.props.rooms?.map((cur, i) => (
           <RoomListItem key={`room-${i}`} room={cur} />

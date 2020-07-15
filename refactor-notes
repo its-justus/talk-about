@@ -56,8 +56,8 @@ _____BACKEND_____
 		
 	______FRONTEND______
 [x] - on OPEN_SOCKET saga, socket.emit(session.startup) to request data from server
-[ ] - add statusReducer. this stores the status of the session. set to "OKAY" on session ready. 
-	[ ] - add socket.on(session.ready) to handle this change. it should dispatch SET_STATUS, payload: 'OKAY'
+[x] - add statusReducer. this stores the status of the session. set to "OKAY" on session ready. 
+	[x] - add socket.on(session.ready) to handle this change. it should dispatch SET_STATUS, payload: 'OKAY'
 [ ] - add conditional render to Main.js to show a loading spinner until state.status is "OKAY"
 [ ] - change socket.on(room.joined) to send data as payload
 [ ] - socket.on(room.joined) saga

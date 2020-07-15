@@ -56,8 +56,10 @@ async function joinTopic(payload, socket, io) {
       io.to(room.id).emit("member.joined", userObj);
     });
 
-    // end our transaction successfully
-		pool.query("ROLLBACK");
+		// end our transaction successfully
+		// TODO this isn't working quite right. rollback does not prevent
+		// topic from being added
+		pool.query("COMMIT");
 
 		// log some performance data
     console.log(`joinTopic runtime: ${Date.now() - startTime}ms`);
