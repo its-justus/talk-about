@@ -16,7 +16,7 @@ class MemberList extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { members: state.members };
+  return { members: state.memberLists[state.currentRoom] };
 };
 
 export default connect(mapStateToProps)(MemberList);

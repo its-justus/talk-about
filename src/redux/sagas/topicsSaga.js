@@ -10,14 +10,14 @@ function* refreshTopics(action) {
       withCredentials: true,
     };
     const response = yield axios.get('/api/topic', config);
-    yield put({type: "SET_TOPICS", payload: response.data})
+    yield put({type: "SET_POPULAR_TOPICS", payload: response.data})
   } catch (error) {
     console.log('Error with refresh topics:', error);
   }
 }
 
 function* topicsSaga() {
-  yield takeLatest('REFRESH_TOPICS', refreshTopics);
+  yield takeLatest('REFRESH_POPULAR_TOPICS', refreshTopics);
 }
 
 export default topicsSaga;

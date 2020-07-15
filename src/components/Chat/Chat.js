@@ -18,7 +18,7 @@ class Chat extends React.Component {
     event.preventDefault();
     this.props.dispatch({
       type: "SEND_MESSAGE",
-      payload: {text: this.state.messageInput, room: this.props.currentRoom.id},
+      payload: {text: this.state.messageInput, room: this.props.currentRoom},
     });
     	this.setState({ messageInput: "" });
   };
@@ -90,10 +90,9 @@ class Chat extends React.Component {
 // if you wanted you could write this code like this:
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
-  socket: state.socket,
   user: state.user,
-  messages: state.messages,
-	members: state.members,
+  messages: state.histories[state.currentRoom],
+	members: state.memberLists[state.currentRoom],
 	currentRoom: state.currentRoom,
 });
 

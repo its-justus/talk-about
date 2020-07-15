@@ -2,18 +2,24 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
 
-class MemberList extends React.Component {
+class RoomListItem extends React.Component {
 	select = () => {
-		this.props.dispatch({type: "SELECT_CURRENT_ROOM", payload: this.props.room.id})
+		this.props.dispatch({type: "SET_CURRENT_ROOM", payload: this.props.room.id})
 	}
 
   render() {
     return (
       <div>
-        <p onClick={this.select}>{this.props.room.topic}</p>
+        <p onClick={this.select}>{this.props.topics[this.props.room.topic_id]}#{this.props.room.id}</p>
       </div>
     );
   }
 }
 
-export default connect()(MemberList);
+const mapStateToProps = (state) => {
+	return {
+		topics: state.topics,
+	}
+}
+
+export default connect(mapStateToProps)(RoomListItem);

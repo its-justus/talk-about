@@ -1,6 +1,18 @@
 import {takeEvery, takeLatest} from 'redux-saga/effects';
 // outbound handles emission of sagas over the socket
 
+// handles starting our session with the server
+function startSession(socket, action) {
+	try {
+		console.log("start session:", action);
+		// let server know we want to start our session. we are identified on the
+		// backend by our passport session (login) so no payload is needed
+		socket.emit("session.start")
+	} catch (error) {
+		console.log("start session error:", error);
+	}
+}
+
 // handles sending messages to the server
 function sendMessage(socket, action) {
 	try {
@@ -84,6 +96,7 @@ function joinTopic(socket, action) {
 
 // export our outbound sagas for use in our main socket saga
 export function* outbound(socket) {
+	yield takeEvery("SESSION_START", startSession, socket);
 	yield takeEvery("SEND_MESSAGE", sendMessage, socket);
 	yield takeEvery("EDIT_MESSAGE", editMessage, socket);
 	yield takeEvery("DELETE_MESSAGE", deleteMessage, socket);

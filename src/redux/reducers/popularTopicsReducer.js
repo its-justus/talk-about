@@ -6,17 +6,13 @@
  *
  * Expected action data structures are included in each case.
  */
-const topicsReducer = (state = {}, action) => {
-  let newState = { ...state };
+const popularTopicsReducer = (state = [], action) => {
+  let newState = [ ...state ];
   switch (action.type) {
-    case "SET_TOPICS":
+    case "SET_POPULAR_TOPICS":
       // action.payload = {topic.id1: topic.name1, topic.id2: topic.name2...}
-      return { ...action.payload };
-    case "ADD_TOPIC":
-      // action.payload = {id: topic.id, name: topic.name}
-      newState[action.payload.id] = action.payload.name;
-      return newState;
-    case "RESET_TOPICS":
+			return [ ...action.payload ];
+    case "RESET_POPULAR_TOPICS":
       // action.payload = N/A
       return {};
     default:
@@ -24,4 +20,4 @@ const topicsReducer = (state = {}, action) => {
   }
 };
 
-export default topicsReducer;
+export default popularTopicsReducer;
