@@ -128,26 +128,29 @@ async function getRoomMembers(roomID) {
 
 /**
  * getRoomHistory queries the database for the room's message history
- * only retrieves 20 messages
+ * only retrieves 20 messages by default unless envar is set up.
  *
- * @param {integer} roomID the room to retrieve the history for
+ * @param {number} roomID the room to retrieve the history for
  * @returns {array} an array of message objects
  */
 async function getRoomHistory(roomID) {
-  //console.log("getRoomMembers:", roomID);
-
+	try {
+	const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
   // define our query
-  const query = {
-    text: `SELECT message.* FROM message
-			WHERE room_id = $1
-			ORDER BY created_at DESC
-			LIMIT 20;`,
-    values: [roomID],
-  };
-  // submit query to pool
+  const query = {}
+  query.text = `SELECT message.* FROM message
+		WHERE room_id = $1
+		ORDER BY created_at DESC
+		LIMIT $2;`;
+  query.values = [roomID, MAX_HISTORY_MESSAGES]
   query.result = await pool.query(query.text, query.values);
-  //console.log("query result:",query.result.rows);
-  return query.result.rows;
+
+	// return our result
+	return query.result.rows;
+	} catch (error) {
+		console.log("getRoomHistory error:", error);
+		throw error;
+	}
 }
 
 /**
