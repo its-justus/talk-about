@@ -22,12 +22,12 @@ const historiesReducer = (state = {}, action) => {
 	let history;
   switch (action.type) {
     case "SET_HISTORIES":
-      // action.payload = {roomID1: historyArray1, roomID2: historyArray2,...]
+      // action.payload = {roomID1: historyArray1, roomID2: historyArray2, ...}
       newState = { ...action.payload };
       return newState;
     case "ADD_HISTORY":
       // action.payload = {roomID: integer, history:[historyArray]}
-      newState[action.payload.roomID] = action.payload.history.reverse();
+      newState[action.payload.roomID] = [...action.payload.history.reverse()];
       return newState;
     case "ADD_MESSAGE":
       // action.payload = {messageObject}
@@ -38,29 +38,22 @@ const historiesReducer = (state = {}, action) => {
     case "UPDATE_MESSAGE":
 			// action.payload = {messageObject}
 			// get the history for the room the message is in
-			console.log("UPDATE_MESSAGE",action.payload);
 			history = [...newState[action.payload.room_id]];
-			console.log("HISTORY:", history);
       // search through our current history newest to oldest for a message id matching our payload
       for (let i = history.length - 1; i >= 0; i--) {
-				console.log(`HISTORY INDEX: ${i}, MESSAGE:`, history[i]);
         if (history[i].id === action.payload.id) {
-					console.log("FOUND MESSAGE");
           // if we find it, swap in the new message and break the loop
 					history[i] = {...action.payload};
-					console.log("NEW HISTORY:", history);
 					// put our new history back into our histories
 					newState[action.payload.room_id] = history;
-					console.log("NEW STATE:", newState);
           break;
         }
 			}
-			console.log("EXITED LOOP, JUST BEFORE RETURN");
       return newState;
     case "REMOVE_MESSAGE":
 			// action.payload = {messageObject}
 			// get the history for the message the room is in
-			history = newState[action.payload.room_id]; 
+			history = [...newState[action.payload.room_id]]; 
 			// remove the message from that history
 			history = history.filter((cur) => cur.id !== action.payload.id);
 			// put the altered history back into our histories

@@ -37,6 +37,8 @@ export function* openSocket() {
 	
 	// start our session with the server
 	yield put({type: "SESSION_START"});
+	// request popular topics
+	yield put({type: "REFRESH_POPULAR_TOPICS"})
 	
 	// pass our disconnect saga
 	yield takeLeading("CLOSE_SOCKET", disconnect, socket);

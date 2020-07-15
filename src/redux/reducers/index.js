@@ -3,6 +3,7 @@ import errors from "./errorsReducer";
 import loginMode from "./loginModeReducer";
 import user from "./userReducer";
 import topics from "./topicsReducer";
+import popularTopics from "./popularTopicsReducer";
 import rooms from "./roomsReducer";
 import currentRoom from "./currentRoomReducer";
 import status from "./statusReducer";
@@ -20,11 +21,12 @@ const rootReducer = combineReducers({
   loginMode, // will have a value of 'login' or 'registration' to control which screen is shown
   user, // will have an id and username if someone is logged in
   topics, // popular topics based on users current filter settings
+  popularTopics, // popular topics retrieved from the server
   rooms, // rooms which the user is a member of
-	currentRoom, // the current room the user is participating in
-	status, // the current status of the app
-	histories, // chat histories for each room the user is an active member of
-	memberLists, // member lists for each room the user is an active member of
+  currentRoom, // the current room the user is participating in
+  status, // the current status of the app
+  histories, // chat histories for each room the user is an active member of
+  memberLists, // member lists for each room the user is an active member of
 });
 
 export default rootReducer;

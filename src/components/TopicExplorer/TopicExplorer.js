@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
-import RoomListItem from '../RoomListItem/RoomListItem';
+import RoomListItem from "../RoomListItem/RoomListItem";
 
 class TopicExplorer extends React.Component {
   state = {
@@ -32,14 +32,13 @@ class TopicExplorer extends React.Component {
         Topics:
         <button
           type="button"
-          onClick={() => this.props.dispatch({ type: "REFRESH_TOPICS" })}
+          onClick={() => this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })}
         >
           Refresh
         </button>
-				{/* TODO update this to show popular topics */}
-        {/* {this.props.topics?.map((cur, i) => (
-          <p key={`topic-${i}`}>{cur.name}</p>
-        ))} */}
+        {this.props.popularTopics?.map((cur, i) => (
+          <p key={`poptopic-${i}`}>{cur.name}</p>
+        ))}
         My Rooms:
         {this.props.rooms?.map((cur, i) => (
           <RoomListItem key={`room-${i}`} room={cur} />
@@ -50,7 +49,11 @@ class TopicExplorer extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { topics: state.topics, rooms: state.rooms };
+  return {
+    topics: state.topics,
+    rooms: state.rooms,
+    popularTopics: state.popularTopics,
+  };
 };
 
 export default connect(mapStateToProps)(TopicExplorer);
