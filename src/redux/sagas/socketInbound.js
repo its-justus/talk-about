@@ -57,7 +57,12 @@ function socketChannel(socket) {
       dispatch({
         type: "ADD_MEMBER_LIST",
         payload: { room: data.id, members: data.members },
-      });
+			});
+			// set this room as our current room
+			dispatch({
+				type: "SET_CURRENT_ROOM",
+				payload: data.id,
+			})
     });
 
 		// Topic Events
