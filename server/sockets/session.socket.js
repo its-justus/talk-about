@@ -48,7 +48,7 @@ async function start(data, socket, io) {
     socket.emit("session.ready");
 
     // log some performance data
-    console.log("run time (ms):", Date.now() - startTime);
+    console.log(`session.start run time: ${Date.now() - startTime}`);
   } catch (error) {
     console.log("session.start error:", error);
   }
@@ -112,13 +112,13 @@ async function getRoomMembers(roomID) {
   try {
     // define our query
     const query = {};
-		query.text = `SELECT account.id, account.username FROM account
+    query.text = `SELECT account.id, account.username FROM account
 			JOIN room_member ON account.id = room_member.account_id
 			WHERE room_member.room_id = $1;`;
-		query.values = [roomID]
+    query.values = [roomID];
     query.result = await pool.query(query.text, query.values);
 
-		// return our results
+    // return our results
     return query.result.rows;
   } catch (error) {
     console.log("getRoomMembers error:", error);
@@ -134,51 +134,54 @@ async function getRoomMembers(roomID) {
  * @returns {array} an array of message objects
  */
 async function getRoomHistory(roomID) {
-	try {
-	const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
-  // define our query
-  const query = {}
-  query.text = `SELECT message.* FROM message
+  try {
+    const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
+    // define our query
+    const query = {};
+    query.text = `SELECT message.* FROM message
 		WHERE room_id = $1
 		ORDER BY created_at DESC
 		LIMIT $2;`;
-  query.values = [roomID, MAX_HISTORY_MESSAGES]
-  query.result = await pool.query(query.text, query.values);
+    query.values = [roomID, MAX_HISTORY_MESSAGES];
+    query.result = await pool.query(query.text, query.values);
 
-	// return our result
-	return query.result.rows;
-	} catch (error) {
-		console.log("getRoomHistory error:", error);
-		throw error;
-	}
+    // return our result
+    return query.result.rows;
+  } catch (error) {
+    console.log("getRoomHistory error:", error);
+    throw error;
+  }
 }
 
 /**
  * getPopularTopics queries the database for the topics with the most
  * rooms currently discussing it
  *
- * @param none
  * @returns {array} an array of topic objects
  */
 async function getPopularTopics() {
-  //console.log("getPopularTopics:");
   // OPTIMIZATION: have a table of topics by popularity that is
   // maintained by the database. this function would then just pick the top 10
-  // of that table. this might be a bad idea though.
-
-  // define our query
-  const query = {
-    text: `SELECT topic.*, count(room) AS rooms FROM topic
+  // of that table. this might be a bad idea though. perhaps have it calculated
+  // every 10 minutes or so...
+  try {
+    const MAX_POPULAR_TOPICS = process.env.MAX_POPULAR_TOPICS || 10;
+    // define our query
+    const query = {};
+    query.text = `SELECT topic.*, count(room) AS rooms FROM topic
 			JOIN room ON topic.id = room.topic_id
 			GROUP BY topic.id
 			ORDER BY count(room) DESC, lower(topic.name) ASC
-			LIMIT 10;`,
-    values: [],
-  };
-  // submit query to pool
-  query.result = await pool.query(query.text);
-  //console.log("query result:",query.result.rows);
-  return query.result.rows;
+			LIMIT $1;`;
+    query.values = [MAX_POPULAR_TOPICS];
+    query.result = await pool.query(query.text, query.values);
+
+    // return our result
+    return query.result.rows;
+  } catch (error) {
+    console.log("getPopularTopics error:", error);
+    throw error;
+  }
 }
 
 module.exports = {
