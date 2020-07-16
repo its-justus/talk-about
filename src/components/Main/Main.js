@@ -6,8 +6,6 @@ import MemberList from "../MemberList/MemberList";
 import TopicExplorer from "../TopicExplorer/TopicExplorer";
 
 class Main extends React.Component {
-  componentDidMount = () => {};
-
   render() {
     return (
       <div>
