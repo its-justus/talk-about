@@ -7,11 +7,11 @@ import {
   Typography,
   withTheme,
   List,
-	Button,
-	IconButton,
+  Button,
+  IconButton,
 } from "@material-ui/core";
 import RoomListItem from "../RoomListItem/RoomListItem";
-import RefreshIcon from '@material-ui/icons/Refresh';
+import RefreshIcon from "@material-ui/icons/Refresh";
 import Divider from "@material-ui/core/Divider";
 
 class TopicExplorer extends React.Component {
@@ -29,10 +29,10 @@ class TopicExplorer extends React.Component {
     return (
       <Box style={{ maxHeight: "100%", overflow: "auto" }}>
         <Grid container>
-          <Grid item name="user-data">
+          <Grid item name="user-data" xs={12}>
             <Typography variant="h6">{this.props.user.username}</Typography>
           </Grid>
-          <Grid item name="enter-topic">
+          <Grid item name="enter-topic" xs={12}>
             <Box borderColor="primary.dark" marginY={2}>
               Enter topic
               <form onSubmit={this.joinTopic}>
@@ -48,34 +48,42 @@ class TopicExplorer extends React.Component {
               </form>
             </Box>
           </Grid>
-          <Grid item name="popular-topics">
-						<Box marginY={2}>
-            Topics
-            <Button
-							type="button"
-							color="secondary.light"
-              onClick={() =>
-                this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
-              }
-            >
-              Refresh
-            </Button>
-            <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
-              {this.props.popularTopics?.map((cur, i) => (
-                <li key={`poptopic-${i}`}>{cur.name}</li>
-              ))}
-            </List>
-						</Box>
+          <Grid item name="popular-topics" xs={12}>
+            <Box marginY={2}>
+              Topics
+              <Button
+                type="button"
+                color="secondary"
+                onClick={() =>
+                  this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
+                }
+              >
+                Refresh
+              </Button>
+              <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
+                {this.props.popularTopics?.map((cur, i) => (
+                  <li
+                    onClick={() => this.props.dispatch({
+                      type: "JOIN_TOPIC",
+                      payload: cur.name,
+                    })}
+                    key={`poptopic-${i}`}
+                  >
+                    {cur.name}
+                  </li>
+                ))}
+              </List>
+            </Box>
           </Grid>
-          <Grid item name="user-rooms">
-						<Box marginY={2}>
-            My Rooms
-						<List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
-            {this.props.rooms?.map((cur, i) => (
-              <RoomListItem key={`room-${i}`} room={cur} />
-            ))}
-						</List>
-						</Box>
+          <Grid item name="user-rooms" xs={12}>
+            <Box marginY={2}>
+              My Rooms
+              <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
+                {this.props.rooms?.map((cur, i) => (
+                  <RoomListItem key={`room-${i}`} room={cur} />
+                ))}
+              </List>
+            </Box>
           </Grid>
         </Grid>
       </Box>

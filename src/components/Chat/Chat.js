@@ -34,7 +34,7 @@ class Chat extends React.Component {
 
   render() {
     const containerStyle = {
-      height: "400px",
+      height: "600px",
       overflowY: "scroll",
       overflowAnchor: "none",
     };
