@@ -1,7 +1,18 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Box,
+  Hidden,
+  Typography,
+  withTheme,
+  List,
+	Button,
+	IconButton,
+} from "@material-ui/core";
 import RoomListItem from "../RoomListItem/RoomListItem";
+import RefreshIcon from '@material-ui/icons/Refresh';
+import Divider from "@material-ui/core/Divider";
 
 class TopicExplorer extends React.Component {
   state = {
@@ -16,41 +27,75 @@ class TopicExplorer extends React.Component {
 
   render() {
     return (
-      <div>
+      <Box style={{ maxHeight: "100%", overflow: "auto" }}>
         <Grid container>
           <Grid item name="user-data">
-            <Typography variant="h6" className="miniTitle">{this.props.user.username}</Typography>
+            <Typography variant="h6">{this.props.user.username}</Typography>
+          </Grid>
+          <Grid item name="enter-topic">
+            <Box borderColor="primary.dark" marginY={2}>
+              Enter topic
+              <form onSubmit={this.joinTopic}>
+                <input
+                  required
+                  minLength={3}
+                  type="text"
+                  value={this.state.topicInput}
+                  onChange={(event) =>
+                    this.setState({ topicInput: event.target.value })
+                  }
+                />
+              </form>
+            </Box>
+          </Grid>
+          <Grid item name="popular-topics">
+						<Box marginY={2}>
+            Topics
+            <Button
+							type="button"
+							color="secondary.light"
+              onClick={() =>
+                this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
+              }
+            >
+              Refresh
+            </Button>
+            <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
+              {this.props.popularTopics?.map((cur, i) => (
+                <li key={`poptopic-${i}`}>{cur.name}</li>
+              ))}
+            </List>
+						</Box>
+          </Grid>
+          <Grid item name="user-rooms">
+						<Box marginY={2}>
+            My Rooms
+						<List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
+            {this.props.rooms?.map((cur, i) => (
+              <RoomListItem key={`room-${i}`} room={cur} />
+            ))}
+						</List>
+						</Box>
           </Grid>
         </Grid>
-        Enter topic:
-        <form onSubmit={this.joinTopic}>
-          <input
-            required
-            minLength={3}
-            type="text"
-            value={this.state.topicInput}
-            onChange={(event) =>
-              this.setState({ topicInput: event.target.value })
-            }
-          />
-        </form>
-        Topics:
-        <button
-          type="button"
-          onClick={() =>
-            this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
-          }
-        >
-          Refresh
-        </button>
-        {this.props.popularTopics?.map((cur, i) => (
-          <p key={`poptopic-${i}`}>{cur.name}</p>
-        ))}
-        My Rooms:
-        {this.props.rooms?.map((cur, i) => (
-          <RoomListItem key={`room-${i}`} room={cur} />
-        ))}
-      </div>
+      </Box>
+      //   {/* Topics:
+      //   <button
+      //     type="button"
+      //     onClick={() =>
+      //       this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
+      //     }
+      //   >
+      //     Refresh
+      //   </button>
+      //   {this.props.popularTopics?.map((cur, i) => (
+      //     <p key={`poptopic-${i}`}>{cur.name}</p>
+      //   ))}
+      //   My Rooms:
+      //   {this.props.rooms?.map((cur, i) => (
+      //     <RoomListItem key={`room-${i}`} room={cur} />
+      //   ))}
+      // </div> */}
     );
   }
 }
@@ -64,4 +109,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(TopicExplorer);
+export default withTheme(connect(mapStateToProps)(TopicExplorer));

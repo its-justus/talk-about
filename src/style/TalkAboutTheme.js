@@ -39,7 +39,10 @@ const theme = createMuiTheme({
     marginBottom: 7,
     lineHeight: 1,
     cursor: "default",
-  },
+	},
+	test: {
+		color: '#ff0000',
+	}
 });
 
 export default theme;

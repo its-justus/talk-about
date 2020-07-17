@@ -16,12 +16,14 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
 import AboutPage from '../AboutPage/AboutPage';
 import Main from '../Main/Main';
 import InfoPage from '../InfoPage/InfoPage';
+import Box from '@material-ui/core/Box';
 
 import './App.css';
 
 class App extends Component {
   render() {
     return (
+			<Box height='100%'>
       <Router>
           <Switch>
             {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
@@ -42,6 +44,7 @@ class App extends Component {
             <Route render={() => <h1>404</h1>} />
           </Switch>
       </Router>
+			</Box>
   )}
 }
 
