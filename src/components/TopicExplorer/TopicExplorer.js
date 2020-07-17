@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden } from "@material-ui/core";
+import { Grid, Box, Hidden, Typography } from "@material-ui/core";
 import RoomListItem from "../RoomListItem/RoomListItem";
 
 class TopicExplorer extends React.Component {
@@ -17,6 +17,11 @@ class TopicExplorer extends React.Component {
   render() {
     return (
       <div>
+        <Grid container>
+          <Grid item name="user-data">
+            <Typography variant="h6" className="miniTitle">{this.props.user.username}</Typography>
+          </Grid>
+        </Grid>
         Enter topic:
         <form onSubmit={this.joinTopic}>
           <input
@@ -32,7 +37,9 @@ class TopicExplorer extends React.Component {
         Topics:
         <button
           type="button"
-          onClick={() => this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })}
+          onClick={() =>
+            this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
+          }
         >
           Refresh
         </button>
@@ -53,6 +60,7 @@ const mapStateToProps = (state) => {
     topics: state.topics,
     rooms: state.rooms,
     popularTopics: state.popularTopics,
+    user: state.user,
   };
 };
 
