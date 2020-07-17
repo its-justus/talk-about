@@ -48,10 +48,10 @@ class RegisterPage extends Component {
       <Grid container justify="center">
         <Grid item className="login-title" xs={12}>
           <Box marginTop={15} margin={5}>
-            <Typography variant="h2" align="center">
+            <Typography variant="h2" align="center" color="primary">
               TalkAbout
             </Typography>
-            <Typography variant="h6" align="center">
+            <Typography variant="h6" align="center" color="primary">
               Your place to talk about anything
             </Typography>
           </Box>
@@ -60,7 +60,7 @@ class RegisterPage extends Component {
           <form onSubmit={this.registerUser}>
             <Grid container justify="center" alignItems="center" spacing={1}>
               <Grid item className="login-form-heading" xs={12}>
-                <Typography variant="subtitle2" align="center">
+                <Typography variant="subtitle2" align="center" color="primary">
                   Please register a username and password
                 </Typography>
               </Grid>
@@ -70,6 +70,7 @@ class RegisterPage extends Component {
                   id="username-input"
                   label="Username"
                   variant="filled"
+                  color="primary"
                   value={this.state.username}
                   onChange={this.handleInputChangeFor("username")}
                 />
@@ -81,12 +82,14 @@ class RegisterPage extends Component {
                   label="Password"
                   type="password"
                   variant="filled"
+                  color="primary"
                   value={this.state.password}
                   onChange={this.handleInputChangeFor("password")}
                 />
               </Grid>
               <Grid item className="login-form-register" xs={4} align="center">
                 <Button
+                  color="primary"
                   onClick={() => {
                     this.props.dispatch({ type: "SET_TO_LOGIN_MODE" });
                   }}
@@ -95,7 +98,9 @@ class RegisterPage extends Component {
                 </Button>
               </Grid>
               <Grid item className="login-form-sign-in" xs={4} align="center">
-                <Button type="submit">Register</Button>
+                <Button type="submit" color="primary">
+                  Register
+                </Button>
               </Grid>
             </Grid>
           </form>

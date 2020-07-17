@@ -2,20 +2,20 @@
     font-size: 14px;
     font-weight: 700;
     display: inline-block;
-    color: #f7f7f2;
+    color: #fbffce;
 		padding-left: 4px;
 		margin: 2px;
 }
 
 .nav {
   overflow: hidden;
-  background-color: #222735;
+  background-color: #313628;
 }
 
 .nav-link {
   float: left;
-  color: #f7f7f2;
-  background-color: #222735;
+  color: #fbffce;
+  background-color: #313628;
   text-align: center;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -32,7 +32,7 @@
 }
 
 .nav-link:hover {
-  background-color: #899878;
+  background-color: #5a6050;
 }
 
 .nav-right {

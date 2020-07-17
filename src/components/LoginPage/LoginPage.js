@@ -7,16 +7,17 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import { withTheme } from "@material-ui/core";
 
 class LoginPage extends Component {
   state = {
     username: "",
     password: "",
-	};
-	componentDidMount() {
-		// clear a pesky warning from an experimental Material UI component (Snackbar + MuiAlert)
-		console.clear();
-	}
+  };
+  componentDidMount() {
+    // clear a pesky warning from an experimental Material UI component (Snackbar + MuiAlert)
+    console.clear();
+  }
 
   login = (event) => {
     event.preventDefault();
@@ -52,10 +53,10 @@ class LoginPage extends Component {
       <Grid container justify="center">
         <Grid item className="login-title" xs={12}>
           <Box marginTop={15} margin={5}>
-            <Typography variant="h2" align="center">
+            <Typography variant="h2" align="center" color="primary">
               TalkAbout
             </Typography>
-            <Typography variant="h6" align="center">
+            <Typography variant="h6" align="center" color="primary">
               Your place to talk about anything
             </Typography>
           </Box>
@@ -64,7 +65,7 @@ class LoginPage extends Component {
           <form onSubmit={this.login}>
             <Grid container justify="center" alignItems="center" spacing={1}>
               <Grid item className="login-form-heading" xs={12}>
-                <Typography variant="subtitle2" align="center">
+                <Typography variant="subtitle2" align="center" color="primary">
                   Please sign in
                 </Typography>
               </Grid>
@@ -75,6 +76,7 @@ class LoginPage extends Component {
                   label="Username"
                   variant="filled"
                   value={this.state.username}
+                  color="primary"
                   onChange={this.handleInputChangeFor("username")}
                 />
               </Grid>
@@ -85,12 +87,14 @@ class LoginPage extends Component {
                   label="Password"
                   type="password"
                   variant="filled"
+                  color="primary"
                   value={this.state.password}
                   onChange={this.handleInputChangeFor("password")}
                 />
               </Grid>
               <Grid item className="login-form-register" xs={4} align="center">
                 <Button
+                  color="primary"
                   onClick={() => {
                     this.props.dispatch({ type: "SET_TO_REGISTER_MODE" });
                   }}
@@ -99,7 +103,9 @@ class LoginPage extends Component {
                 </Button>
               </Grid>
               <Grid item className="login-form-sign-in" xs={4} align="center">
-                <Button type="submit">Sign In</Button>
+                <Button type="submit" color="primary">
+                  Sign In
+                </Button>
               </Grid>
             </Grid>
           </form>
@@ -130,4 +136,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
 });
 
-export default connect(mapStateToProps)(LoginPage);
+export default withTheme(connect(mapStateToProps)(LoginPage));
