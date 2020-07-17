@@ -34,14 +34,14 @@ class RegisterPage extends Component {
     this.setState({
       [propertyName]: event.target.value,
     });
-	};
-	
-	handleErrorClose = (event, reason) => {
-		if (reason === "clickaway") {
-			return;
-		}
-		this.props.dispatch({type: "CLEAR_REGISTRATION_ERROR"});
-	}
+  };
+
+  handleErrorClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.props.dispatch({ type: "CLEAR_REGISTRATION_ERROR" });
+  };
 
   render() {
     return (
@@ -105,10 +105,15 @@ class RegisterPage extends Component {
           autoHideDuration={5 * 1000}
           onClose={this.handleErrorClose}
         >
-					<MuiAlert elevation={6} variant="outlined" onClose={this.handleErrorClose} severity="error">
-						{this.props.errors.registrationMessage}
-					</MuiAlert>
-				</Snackbar>
+          <MuiAlert
+            elevation={6}
+            variant="outlined"
+            onClose={this.handleErrorClose}
+            severity="error"
+          >
+            {this.props.errors.registrationMessage}
+          </MuiAlert>
+        </Snackbar>
       </Grid>
     );
   }

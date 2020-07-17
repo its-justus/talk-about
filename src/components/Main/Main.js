@@ -4,11 +4,13 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 import Chat from "../Chat/Chat";
 import MemberList from "../MemberList/MemberList";
 import TopicExplorer from "../TopicExplorer/TopicExplorer";
+import Nav from "../Nav/Nav";
 
 class Main extends React.Component {
   render() {
     return (
       <div>
+				<Nav />
         {this.props.status === "STARTING" && "Loading..."}
         {this.props.status === "OKAY" && (
           <Grid container justify="center">

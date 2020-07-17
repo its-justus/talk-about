@@ -12,7 +12,11 @@ class LoginPage extends Component {
   state = {
     username: "",
     password: "",
-  };
+	};
+	componentDidMount() {
+		// clear a pesky warning from an experimental Material UI component (Snackbar + MuiAlert)
+		console.clear();
+	}
 
   login = (event) => {
     event.preventDefault();
@@ -34,14 +38,14 @@ class LoginPage extends Component {
     this.setState({
       [propertyName]: event.target.value,
     });
-	};
-	
-	handleErrorClose = (event, reason) => {
-		if (reason === "clickaway") {
-			return;
-		}
-		this.props.dispatch({type: "CLEAR_LOGIN_ERROR"});
-	}
+  };
+
+  handleErrorClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.props.dispatch({ type: "CLEAR_LOGIN_ERROR" });
+  };
 
   render() {
     return (
@@ -100,15 +104,20 @@ class LoginPage extends Component {
             </Grid>
           </form>
         </Grid>
-				<Snackbar
+        <Snackbar
           open={this.props.errors.loginMessage}
           autoHideDuration={5 * 1000}
           onClose={this.handleErrorClose}
         >
-					<MuiAlert elevation={6} variant="outlined" onClose={this.handleErrorClose} severity="error">
-						{this.props.errors.loginMessage}
-					</MuiAlert>
-				</Snackbar>
+          <MuiAlert
+            elevation={6}
+            variant="outlined"
+            onClose={this.handleErrorClose}
+            severity="error"
+          >
+            {this.props.errors.loginMessage}
+          </MuiAlert>
+        </Snackbar>
       </Grid>
     );
   }
