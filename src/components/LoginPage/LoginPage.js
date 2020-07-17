@@ -5,6 +5,8 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 class LoginPage extends Component {
   state = {
@@ -32,7 +34,14 @@ class LoginPage extends Component {
     this.setState({
       [propertyName]: event.target.value,
     });
-  };
+	};
+	
+	handleErrorClose = (event, reason) => {
+		if (reason === "clickaway") {
+			return;
+		}
+		this.props.dispatch({type: "CLEAR_LOGIN_ERROR"});
+	}
 
   render() {
     return (
@@ -46,13 +55,6 @@ class LoginPage extends Component {
               Your place to talk about anything
             </Typography>
           </Box>
-        </Grid>
-        <Grid item className="login-error" xs={12}>
-          {this.props.errors.loginMessage && (
-            <h2 className="alert" role="alert">
-              {this.props.errors.loginMessage}
-            </h2>
-          )}
         </Grid>
         <Grid item className="login-form" xs={4}>
           <form onSubmit={this.login}>
@@ -98,6 +100,15 @@ class LoginPage extends Component {
             </Grid>
           </form>
         </Grid>
+				<Snackbar
+          open={this.props.errors.loginMessage}
+          autoHideDuration={5 * 1000}
+          onClose={this.handleErrorClose}
+        >
+					<MuiAlert elevation={6} variant="outlined" onClose={this.handleErrorClose} severity="error">
+						{this.props.errors.loginMessage}
+					</MuiAlert>
+				</Snackbar>
       </Grid>
     );
   }
