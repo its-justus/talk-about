@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
 import ChatMessage from "../ChatMessage/ChatMessage";
+import ChatStream from "../ChatStream/ChatStream";
 
 class Chat extends React.Component {
   state = {
@@ -33,16 +34,13 @@ class Chat extends React.Component {
   // }
 
   render() {
-    const containerStyle = {
-      height: "600px",
-      overflowY: "scroll",
-      overflowAnchor: "none",
-    };
+    
     return (
       <div>
         <Grid container>
           <Grid item xs={9}>
-            Messages:
+						<ChatStream />
+            {/* Messages:
             <div style={containerStyle}>
               {this.props.messages?.map((cur, i) => {
                 let author;
@@ -63,9 +61,9 @@ class Chat extends React.Component {
                   />
                 );
               })}
-              {/* the div below is used for anchoring the chat at the bottom */}
-              <div ref={(el) => (this.messagesEnd = el)}></div>
-            </div>
+              {/* the div below is used for anchoring the chat at the bottom */
+              /* <div ref={(el) => (this.messagesEnd = el)}></div>
+            </div> */} 
             <br />
             <form onSubmit={this.sendMessage}>
               <input
