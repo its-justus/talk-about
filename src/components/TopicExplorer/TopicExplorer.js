@@ -51,15 +51,15 @@ class TopicExplorer extends React.Component {
           <Grid item name="popular-topics" xs={12}>
             <Box marginY={2}>
               Topics
-              <Button
+              <IconButton
                 type="button"
                 color="secondary"
                 onClick={() =>
                   this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
                 }
               >
-                Refresh
-              </Button>
+								<RefreshIcon />
+              </IconButton>
               <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
                 {this.props.popularTopics?.map((cur, i) => (
                   <li

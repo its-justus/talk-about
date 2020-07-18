@@ -4,31 +4,26 @@ import { connect } from "react-redux";
 import LogOutButton from "../LogOutButton/LogOutButton";
 import "./Nav.css";
 import { Typography, Grid } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 const Nav = (props) => (
-  <div className="nav">
-    <Grid container>
-      <Grid item xs>
+  <Box bgcolor="primary.main">
+    <Grid container justify="space-between" alignItems="">
+      <Grid item xs justify="flex-start">
         <Typography variant="overline" color="secondary">
           TalkAbout
         </Typography>
       </Grid>
       <Grid item xs>
-        <div className="nav-right">
-          {/* Show the link to the info page and the logout button if the user is logged in */}
-          {props.user.id && (
-            <>
-              <LogOutButton className="nav-link" />
-            </>
-          )}
-          {/* Always show this link since the about page is not protected */}
+        <Box display="flex" flexDirection="row-reverse">
+          <LogOutButton className="nav-link" />
           <Link className="nav-link" to="/about">
             About
           </Link>
-        </div>
+        </Box>
       </Grid>
     </Grid>
-  </div>
+  </Box>
 );
 
 const mapStateToProps = (state) => ({

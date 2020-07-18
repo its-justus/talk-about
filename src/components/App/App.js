@@ -23,7 +23,7 @@ import './App.css';
 class App extends Component {
   render() {
     return (
-			<Box height='100%'>
+			<Box display="flex" height='100vh'>
       <Router>
           <Switch>
             {/* Visiting localhost:3000 will redirect to localhost:3000/home */}

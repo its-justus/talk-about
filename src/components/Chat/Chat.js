@@ -40,30 +40,6 @@ class Chat extends React.Component {
         <Grid container>
           <Grid item xs={9}>
 						<ChatStream />
-            {/* Messages:
-            <div style={containerStyle}>
-              {this.props.messages?.map((cur, i) => {
-                let author;
-                const { members } = this.props;
-                for (let index in members) {
-                  if (cur.author_id === members[index].id) {
-                    author = members[index].username;
-                    break;
-                  }
-                }
-                return (
-                  <ChatMessage
-										key={`message-${i}`}
-										id={cur.id}
-                    author={author}
-                    authorID={cur.author_id}
-                    text={cur.text}
-                  />
-                );
-              })}
-              {/* the div below is used for anchoring the chat at the bottom */
-              /* <div ref={(el) => (this.messagesEnd = el)}></div>
-            </div> */} 
             <br />
             <form onSubmit={this.sendMessage}>
               <input
