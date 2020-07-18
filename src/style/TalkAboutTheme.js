@@ -25,21 +25,10 @@ const theme = createMuiTheme({
       fontFamily: "Fredoka One",
       fontSize: 16,
       paddingLeft: 5,
-      marginTop: 7,
-      marginBottom: 7,
       lineHeight: 1,
       cursor: "default",
     },
   },
-  miniTitle: {
-    fontFamily: "Fredoka One",
-    fontSize: 16,
-    paddingLeft: 5,
-    marginTop: 7,
-    marginBottom: 7,
-    lineHeight: 1,
-    cursor: "default",
-	},
 	test: {
 		color: '#ff0000',
 	}

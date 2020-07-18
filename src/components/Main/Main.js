@@ -12,40 +12,65 @@ class Main extends React.Component {
       return <>Loading...</>;
     } else if (this.props.status === "OKAY") {
       return (
-        <Grid container spacing={0}>
-          <Grid item name="navbar" xs={12}>
-            <Nav />
-          </Grid>
-          <Hidden xsDown>
-            <Grid item name="left-section">
+        <>
+          <Box name="container" width="100%" height="100%" display="flex" flexDirection="column">
+            <Box name="header" width="100%" display="flex" flexDirection="row">
+              <Nav />
+            </Box>
+            <Box name="body" display="flex" flexDirection="row" height="95%">
               <Box
+                name="left"
+                display="flex"
+                flexDirection="row"
                 width={200}
                 height="100%"
                 padding={1}
                 bgcolor="primary.main"
-                borderRight={3}
-                borderColor="error.main"
                 color="secondary.light"
               >
                 <TopicExplorer />
               </Box>
-            </Grid>
-          </Hidden>
-          <Grid item name="center-section" xs>
-            <Chat />
-          </Grid>
-          <Hidden xsDown>
-            <Grid item name="right-section">
-              <Box width={200}>
+							<Box name="center" flexGrow={1}>
+								<Chat />
+							</Box>
+              <Box name="right" display="flex" width={200}>
                 <MemberList />
               </Box>
-            </Grid>
-          </Hidden>
-        </Grid>
+            </Box>
+          </Box>
+          
+        </>
       );
     }
   }
 }
+
+// {/* <Grid container spacing={0}>
+//             <Grid item xs={12}>
+//               <Nav />
+//             </Grid>
+//             <Grid item xs={12}>
+//               <Hidden xsDown>
+//                 <Grid item name="left-section">
+//                   <Box
+//                     width={200}
+//                     height="100%"
+//                     padding={1}
+//                     bgcolor="primary.main"
+//                     color="secondary.light"
+//                   >
+//                     <TopicExplorer />
+//                   </Box>
+//                 </Grid>
+//               </Hidden>
+//               <Grid item name="center-section" xs>
+//                 <Chat />
+//               </Grid>
+//               <Hidden xsDown>
+//                 <Grid item name="right-section"></Grid>
+//               </Hidden>
+//             </Grid>
+//           </Grid> */}
 
 // Instead of taking everything from state, we just want the user info.
 // if you wanted you could write this code like this:

@@ -38,7 +38,7 @@ class Chat extends React.Component {
     return (
       <div>
         <Grid container>
-          <Grid item xs={9}>
+          <Grid item xs={12}>
 						<ChatStream />
             <br />
             <form onSubmit={this.sendMessage}>

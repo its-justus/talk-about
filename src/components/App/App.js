@@ -5,6 +5,7 @@ import {
   Redirect,
   Switch,
 } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import {connect} from 'react-redux';
 
@@ -20,10 +21,12 @@ import Box from '@material-ui/core/Box';
 
 import './App.css';
 
+
 class App extends Component {
   render() {
     return (
-			<Box display="flex" height='100vh'>
+      <>
+			<Box name="root" display="flex" height='100vh' width="100vw" margin={0} padding={0}>
       <Router>
           <Switch>
             {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
@@ -45,6 +48,7 @@ class App extends Component {
           </Switch>
       </Router>
 			</Box>
+      </>
   )}
 }
 
