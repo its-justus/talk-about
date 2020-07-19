@@ -14,30 +14,51 @@ class Main extends React.Component {
       return (
         <>
           <Box name="main-row" flexGrow={1}>
-						<Box name="main-col" height="100%" maxHeight="100%" minHeight="100%">
-            <Box name="header" flexGrow={1}>
-              <Nav />
-            </Box>
-            <Box name="body" display="flex" flexDirection="row" height="calc(100% - 25px)">
+            <Box
+              name="main-col"
+              height="100%"
+              maxHeight="100%"
+              minHeight="100%"
+            >
+              <Box name="header" flexGrow={1}>
+                <Nav />
+              </Box>
               <Box
-                name="left"
-                width={200}
-                padding={1}
-                bgcolor="primary.main"
-                color="secondary.light"
+                name="body"
+                display="flex"
+                flexDirection="row"
+                height="calc(100% - 25px)"
               >
-                <TopicExplorer />
-              </Box>
-							<Box name="center" flex="1 0 auto" padding={1}>
-								<Chat />
-							</Box>
-              <Box name="right" display="flex" width={200}>
-                <MemberList />
+                <Box
+                  name="left"
+                  width={200}
+                  padding={1}
+                  bgcolor="primary.main"
+                  color="secondary.light"
+                >
+                  <TopicExplorer />
+                </Box>
+                <Box
+                  name="center"
+                  flex="1 0 auto"
+                  padding={1}
+                  bgcolor="primary.main"
+                  color="secondary.light"
+                >
+                  <Chat />
+                </Box>
+                <Box
+                  name="right"
+                  display="flex"
+                  width={200}
+                  bgcolor="primary.main"
+                  color="secondary.light"
+                >
+                  <MemberList />
+                </Box>
               </Box>
             </Box>
-						</Box>
           </Box>
-          
         </>
       );
     }

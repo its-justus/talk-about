@@ -33,7 +33,7 @@ class TopicExplorer extends React.Component {
             <Typography variant="h6">{this.props.user.username}</Typography>
           </Grid>
           <Grid item name="enter-topic" xs={12}>
-            <Box borderColor="primary.dark" marginY={2}>
+            <Box borderColor="primary.dark" marginY={1}>
               Enter topic
               <form onSubmit={this.joinTopic}>
                 <input
@@ -49,7 +49,7 @@ class TopicExplorer extends React.Component {
             </Box>
           </Grid>
           <Grid item name="popular-topics" xs={12}>
-            <Box marginY={2}>
+            <Box marginY={1}>
               Topics
               <IconButton
                 type="button"
@@ -76,7 +76,7 @@ class TopicExplorer extends React.Component {
             </Box>
           </Grid>
           <Grid item name="user-rooms" xs={12}>
-            <Box marginY={2}>
+            <Box marginY={1}>
               My Rooms
               <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
                 {this.props.rooms?.map((cur, i) => (
@@ -87,23 +87,6 @@ class TopicExplorer extends React.Component {
           </Grid>
         </Grid>
       </Box>
-      //   {/* Topics:
-      //   <button
-      //     type="button"
-      //     onClick={() =>
-      //       this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
-      //     }
-      //   >
-      //     Refresh
-      //   </button>
-      //   {this.props.popularTopics?.map((cur, i) => (
-      //     <p key={`poptopic-${i}`}>{cur.name}</p>
-      //   ))}
-      //   My Rooms:
-      //   {this.props.rooms?.map((cur, i) => (
-      //     <RoomListItem key={`room-${i}`} room={cur} />
-      //   ))}
-      // </div> */}
     );
   }
 }

@@ -10,20 +10,16 @@ class ChatStream extends React.Component {
 
 	// this is some hacky shit to keep the scroll at the bottom :)
   scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    this.messagesEnd.scrollIntoView();
   };
 
   componentDidUpdate() {
-		console.log(this.state.atBottom);
 		if(this.state.atBottom){
 			this.scrollToBottom();
 		}
 	}
 	
 	handleScroll = (event) => {
-		console.log(event.target.scrollHeight);
-		console.log(event.target.clientHeight);
-		console.log(event.target.scrollTop);
 		const {scrollHeight, clientHeight, scrollTop} = event.target;
 		if(clientHeight + scrollTop !== scrollHeight) {
 			this.setState({atBottom: false});

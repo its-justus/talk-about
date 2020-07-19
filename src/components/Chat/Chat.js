@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden, TextField } from "@material-ui/core";
+import { Grid, Box, Hidden, TextField, withTheme } from "@material-ui/core";
 import ChatMessage from "../ChatMessage/ChatMessage";
 import ChatStream from "../ChatStream/ChatStream";
 
@@ -73,4 +73,4 @@ const mapStateToProps = (state) => ({
 });
 
 // this allows us to use <App /> in index.js
-export default connect(mapStateToProps)(Chat);
+export default withTheme(connect(mapStateToProps)(Chat));
