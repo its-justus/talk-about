@@ -4,12 +4,44 @@ import { Grid, Box, Hidden } from "@material-ui/core";
 import ChatMessage from "../ChatMessage/ChatMessage";
 
 class ChatStream extends React.Component {
+	state = {
+		atBottom: true,
+	}
+
+	// this is some hacky shit to keep the scroll at the bottom :)
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+  };
+
+  componentDidUpdate() {
+		console.log(this.state.atBottom);
+		if(this.state.atBottom){
+			this.scrollToBottom();
+		}
+	}
+	
+	handleScroll = (event) => {
+		console.log(event.target.scrollHeight);
+		console.log(event.target.clientHeight);
+		console.log(event.target.scrollTop);
+		const {scrollHeight, clientHeight, scrollTop} = event.target;
+		if(clientHeight + scrollTop !== scrollHeight) {
+			this.setState({atBottom: false});
+		} else {
+			this.setState({atBottom: true});
+		}
+	}
 
   render() {
     return (
-      <>
-        {`Room#${this.props.currentRoom} Topic: ${this.props.topic}`}
-        <div>
+      <Box
+					name="chat-stream"
+          height="calc(100% - 131px)"
+          flexShrink={1}
+          flexDirection="column"
+					overflow="scroll"
+					onScroll={this.handleScroll}
+        >
           {this.props.messages?.map((cur, i) => {
             return (
               <ChatMessage
@@ -20,16 +52,15 @@ class ChatStream extends React.Component {
           })}
           {/* the div below is used for anchoring the chat at the bottom */}
           <div ref={(el) => (this.messagesEnd = el)}></div>
-        </div>
-      </>
+      </Box>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
-  messages: state.histories[state.currentRoom],
+  messages: state.histories[state.currentRoom.id],
 	currentRoom: state.currentRoom,
-	topic: state.topics[state.currentRoom],
+	topic: state.topics[state.currentRoom.topic_id],
 });
 
 export default connect(mapStateToProps)(ChatStream);

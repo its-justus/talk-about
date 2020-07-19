@@ -73,7 +73,7 @@ class ChatMessage extends React.Component {
 const mapStateToProps = (state) => {
   return { 
 		user: state.user,
-		members: state.memberLists[state.currentRoom]
+		members: state.memberLists[state.currentRoom.id]
 	};
 };
 

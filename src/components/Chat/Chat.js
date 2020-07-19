@@ -18,50 +18,43 @@ class Chat extends React.Component {
     console.log("sendMessage");
     this.props.dispatch({
       type: "SEND_MESSAGE",
-      payload: { text: this.state.messageInput, room: this.props.currentRoom },
+      payload: {
+        text: this.state.messageInput,
+        room: this.props.currentRoom.id,
+      },
     });
     this.setState({ messageInput: "" });
   };
 
-	handleKeyPress = (event) => {
-		console.log(event.key, event.shiftKey);
-		// if user presses enter we send the message, shift ignores this
-		if(event.key === "Enter" && !event.shiftKey){
-			this.sendMessage()
-		} 
-	}
-
-  // // this is some hacky shit to keep the scroll at the bottom :)
-  // scrollToBottom = () => {
-  // 	this.messagesEnd.scrollIntoView({behavior: 'smooth'});
-  // }
-
-  // componentDidUpdate() {
-  // 	this.scrollToBottom();
-  // }
+  handleKeyPress = (event) => {
+    console.log(event.key, event.shiftKey);
+    // if user presses enter we send the message, shift ignores this
+    if (event.key === "Enter" && !event.shiftKey) {
+      this.sendMessage();
+    }
+  };
 
   render() {
     return (
       <Box height="100%">
-        <Box height="calc(100% - 113px)" flexShrink={1} flexDirection="column" overflow="scroll">
-          <ChatStream />
-        </Box>
+				{`Room#${this.props.currentRoom.id} Topic: ${this.props.topic}`}
+        <ChatStream />
         <Box height="113px">
-            <TextField
-							name="chat-input"
-              required
-							fullWidth
-							multiline
-							rows={4}
-							rowsMax={4}
-							type="text"
-							variant="outlined"
-              value={this.state.messageInput}
-              onChange={(event) =>
-                this.setState({ messageInput: event.target.value })
-							}
-							onKeyPress={this.handleKeyPress}
-            />
+          <TextField
+            name="chat-input"
+            required
+            fullWidth
+            multiline
+            rows={4}
+            rowsMax={4}
+            type="text"
+            variant="outlined"
+            value={this.state.messageInput}
+            onChange={(event) =>
+              this.setState({ messageInput: event.target.value })
+            }
+            onKeyPress={this.handleKeyPress}
+          />
         </Box>
       </Box>
     );
@@ -73,8 +66,9 @@ class Chat extends React.Component {
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
   user: state.user,
-  messages: state.histories[state.currentRoom],
-  members: state.memberLists[state.currentRoom],
+  messages: state.histories[state.currentRoom.id],
+  members: state.memberLists[state.currentRoom.id],
+  topic: state.topics[state.currentRoom.topic_id],
   currentRoom: state.currentRoom,
 });
 

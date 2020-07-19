@@ -6,7 +6,7 @@ class RoomListItem extends React.Component {
   select = () => {
     this.props.dispatch({
       type: "SET_CURRENT_ROOM",
-      payload: this.props.room.id,
+      payload: this.props.room,
     });
   };
 
