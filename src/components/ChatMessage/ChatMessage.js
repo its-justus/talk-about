@@ -7,7 +7,12 @@ import {
   Typography,
   TextField,
   Divider,
+  IconButton,
 } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import CancelIcon from "@material-ui/icons/Cancel";
+import SaveIcon from "@material-ui/icons/Save";
 
 class ChatMessage extends React.Component {
   state = {
@@ -79,26 +84,42 @@ class ChatMessage extends React.Component {
           <Box name="options">
             {!this.state.editing && (
               <>
-                <button type="button" onClick={this.toggleEditMode}>
-                  Edit
-                </button>
-                <button
+                <IconButton
                   type="button"
-                  display="inline"
+                  color="primary"
+                  size="small"
+                  onClick={this.toggleEditMode}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  type="button"
+                  color="primary"
+                  size="small"
                   onClick={this.deleteMessage}
                 >
-                  X
-                </button>
+                  <DeleteIcon />
+                </IconButton>
               </>
             )}
             {this.state.editing && (
               <>
-                <button type="button" onClick={this.toggleEditMode}>
-                  Cancel
-                </button>
-                <button type="button" onClick={this.save}>
-                  Save
-                </button>
+                <IconButton
+                  type="button"
+                  color="primary"
+                  size="small"
+                  onClick={this.toggleEditMode}
+                >
+                  <CancelIcon />
+                </IconButton>
+								<IconButton
+                  type="button"
+                  color="primary"
+                  size="small"
+                  onClick={this.save}
+                >
+                  <SaveIcon />
+                </IconButton>
               </>
             )}
           </Box>
