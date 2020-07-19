@@ -13,17 +13,14 @@ class Main extends React.Component {
     } else if (this.props.status === "OKAY") {
       return (
         <>
-          <Box name="container" width="100%" height="100%" display="flex" flexDirection="column">
-            <Box name="header" width="100%" display="flex" flexDirection="row">
+          <Box name="main" flexGrow={1}>
+            <Box name="header" flexGrow={1}>
               <Nav />
             </Box>
-            <Box name="body" display="flex" flexDirection="row" height="95%">
+            <Box name="body" display="flex" flexDirection="row" height="100%">
               <Box
                 name="left"
-                display="flex"
-                flexDirection="row"
                 width={200}
-                height="100%"
                 padding={1}
                 bgcolor="primary.main"
                 color="secondary.light"
