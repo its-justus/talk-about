@@ -35,11 +35,12 @@ class Chat extends React.Component {
   };
 
   handleKeyPress = (event) => {
-    console.log(event.key, event.shiftKey);
-    // if user presses enter we send the message, shift ignores this
-    if (event.key === "Enter" && !event.shiftKey) {
+		if( this.state.messageInput.trim() === ""){
+			// if the user pressed enter on an empty input ignore it
+			this.setState({messageInput: ""})
+		} else if (event.key === "Enter" && !event.shiftKey) {
       this.sendMessage();
-    }
+    } 
   };
 
   render() {

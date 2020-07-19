@@ -1,16 +1,26 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden } from "@material-ui/core";
+import { Grid, Box, Hidden, Typography } from "@material-ui/core";
 
 class MemberList extends React.Component {
   render() {
     return (
-      <div>
-        Member List:
+      <Box
+				padding={1}
+				margin={1}
+        display="flex"
+        flexDirection="column"
+        flexGrow={1}
+				bgcolor="secondary.light"
+				borderRadius={5}
+      >
+        <Typography variant="h6">Room Members</Typography>
         {this.props.members?.map((cur, i) => (
-          <p key={`member-${i}`}>{cur.username}</p>
+          <Typography variant="subtitle1">
+            <p key={`member-${i}`}>{cur.username}</p>
+          </Typography>
         ))}
-      </div>
+      </Box>
     );
   }
 }
