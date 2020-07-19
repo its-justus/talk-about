@@ -33,17 +33,17 @@ class Main extends React.Component {
                   name="left"
                   width={200}
                   padding={1}
-                  bgcolor="primary.main"
-                  color="secondary.light"
+                  bgcolor="background.default"
+                  color="black.main"
                 >
                   <TopicExplorer />
                 </Box>
                 <Box
                   name="center"
-                  flex="1 0 auto"
+                  flex="1 1 auto"
                   padding={1}
-                  bgcolor="primary.main"
-                  color="secondary.light"
+                  bgcolor="background.default"
+                  color="black.main"
                 >
                   <Chat />
                 </Box>
@@ -51,8 +51,8 @@ class Main extends React.Component {
                   name="right"
                   display="flex"
                   width={200}
-                  bgcolor="primary.main"
-                  color="secondary.light"
+                  bgcolor="background.default"
+                  color="black.main"
                 >
                   <MemberList />
                 </Box>

@@ -32,7 +32,7 @@ class ChatStream extends React.Component {
     return (
       <Box
 					name="chat-stream"
-          height="calc(100% - 131px)"
+          height="calc(100% - 146px)"
           flexShrink={1}
           flexDirection="column"
 					overflow="scroll"

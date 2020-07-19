@@ -1,6 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden, TextField, withTheme } from "@material-ui/core";
+import {
+  Grid,
+  Box,
+  Hidden,
+  TextField,
+  withTheme,
+  Divider,
+  Typography,
+} from "@material-ui/core";
 import ChatMessage from "../ChatMessage/ChatMessage";
 import ChatStream from "../ChatStream/ChatStream";
 
@@ -37,7 +45,10 @@ class Chat extends React.Component {
   render() {
     return (
       <Box height="100%">
-				{`Room#${this.props.currentRoom.id} Topic: ${this.props.topic}`}
+        <Typography variant="h6">
+          {`Room#${this.props.currentRoom.id} Topic: ${this.props.topic}`}
+        </Typography>
+        <Divider />
         <ChatStream />
         <Box height="113px">
           <TextField

@@ -1,6 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden } from "@material-ui/core";
+import {
+  Grid,
+  Box,
+  Hidden,
+  Typography,
+  TextField,
+  Divider,
+} from "@material-ui/core";
 
 class ChatMessage extends React.Component {
   state = {
@@ -9,7 +16,10 @@ class ChatMessage extends React.Component {
   };
 
   deleteMessage = () => {
-    this.props.dispatch({ type: "DELETE_MESSAGE", payload: this.props.message.id });
+    this.props.dispatch({
+      type: "DELETE_MESSAGE",
+      payload: this.props.message.id,
+    });
   };
 
   handleChange = (event) => {
@@ -17,7 +27,6 @@ class ChatMessage extends React.Component {
   };
 
   save = (event) => {
-    event.preventDefault();
     this.props.dispatch({
       type: "EDIT_MESSAGE",
       payload: { text: this.state.editInput, id: this.props.message.id },
@@ -33,48 +42,97 @@ class ChatMessage extends React.Component {
     }
   };
 
+  handleKeyPress = (event) => {
+    // if user presses enter we send the message, shift ignores this
+    if (event.key === "Enter" && !event.shiftKey) {
+      this.save();
+    }
+  };
+
   render() {
-		const { author_id, text } = this.props.message;
-		const author = this.props.members.find((cur) => cur.id === author_id).username;
+    const { author_id, text } = this.props.message;
+    const author = this.props.members.find((cur) => cur.id === author_id)
+      .username;
     return (
-      <div>
-        {this.state.editing ? (
-          <form onSubmit={this.save}>
-            <input
+      <Box
+        name="message-container"
+        width="100%"
+        maxWidth="100%"
+        display="flex"
+        flexDirection="column"
+      >
+        <Box paddingY={1} paddingX={2}>
+          <Divider variant="middle" />
+        </Box>
+        <Box
+          name="message-header"
+          paddingX={2}
+          display="flex"
+          flexDirection="row"
+          onBlur={() => this.setState({ editing: false })}
+        >
+          <Box flexGrow={1} name="author">
+            <Typography variant="h6" color="secondary.main">
+              {author}
+            </Typography>
+          </Box>
+          <Box name="options">
+            {!this.state.editing && (
+              <>
+                <button type="button" onClick={this.toggleEditMode}>
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  display="inline"
+                  onClick={this.deleteMessage}
+                >
+                  X
+                </button>
+              </>
+            )}
+            {this.state.editing && (
+              <>
+                <button type="button" onClick={this.toggleEditMode}>
+                  Cancel
+                </button>
+                <button type="button" onClick={this.save}>
+                  Save
+                </button>
+              </>
+            )}
+          </Box>
+        </Box>
+        <Box name="message-body" paddingX={3}>
+          {!this.state.editing && <Typography>{text}</Typography>}
+          {this.state.editing && (
+            <TextField
+              name="chat-input"
+              required
+              fullWidth
+              multiline
+              rows={3}
+              rowsMax={3}
               type="text"
+              variant="filled"
               value={this.state.editInput}
-              onChange={this.handleChange}
+              onChange={(event) =>
+                this.setState({ editInput: event.target.value })
+              }
+              onKeyPress={this.handleKeyPress}
             />
-            <button type="button" onClick={this.cancelEdit}>
-              Cancel
-            </button>
-            <button type="submit">Save</button>
-          </form>
-        ) : (
-          <p>
-            {author}: {text}
-          </p>
-        )}
-        {this.props.user.id === author_id && (
-          <>
-            <button type="button" onClick={this.toggleEditMode}>
-              Edit
-            </button>
-            <button type="button" onClick={this.deleteMessage}>
-              X
-            </button>
-          </>
-        )}
-      </div>
+          )}
+        </Box>
+      </Box>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return { 
-		user: state.user,
-		members: state.memberLists[state.currentRoom.id]
-	};
+  return {
+    user: state.user,
+    members: state.memberLists[state.currentRoom.id],
+  };
 };
 
 export default connect(mapStateToProps)(ChatMessage);
