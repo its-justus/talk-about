@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden } from "@material-ui/core";
+import { Grid, Box, Hidden, TextField } from "@material-ui/core";
 import ChatMessage from "../ChatMessage/ChatMessage";
 import ChatStream from "../ChatStream/ChatStream";
 
@@ -19,9 +19,9 @@ class Chat extends React.Component {
     event.preventDefault();
     this.props.dispatch({
       type: "SEND_MESSAGE",
-      payload: {text: this.state.messageInput, room: this.props.currentRoom},
+      payload: { text: this.state.messageInput, room: this.props.currentRoom },
     });
-    	this.setState({ messageInput: "" });
+    this.setState({ messageInput: "" });
   };
 
   // // this is some hacky shit to keep the scroll at the bottom :)
@@ -34,28 +34,30 @@ class Chat extends React.Component {
   // }
 
   render() {
-    
     return (
-      <div>
-        <Grid container>
-          <Grid item xs={12}>
-						<ChatStream />
-            <br />
-            <form onSubmit={this.sendMessage}>
-              <input
-                required
-                width="100%"
-                name="messageInput"
-                type="text"
-                value={this.state.messageInput}
-                onChange={(event) =>
-                  this.setState({ messageInput: event.target.value })
-                }
-              />
-            </form>
-          </Grid>
-        </Grid>
-      </div>
+      <Box height="100%">
+        <Box height="calc(100% - 113px)" flexShrink={1} flexDirection="column" overflow="scroll">
+          <ChatStream />
+        </Box>
+        <Box height="113px">
+          <form onSubmit={this.sendMessage}>
+            <TextField
+							name="chat-input"
+              required
+							fullWidth
+							multiline
+							rows={4}
+							rowsMax={4}
+							type="text"
+							variant="outlined"
+              value={this.state.messageInput}
+              onChange={(event) =>
+                this.setState({ messageInput: event.target.value })
+              }
+            />
+          </form>
+        </Box>
+      </Box>
     );
   }
 }
@@ -66,8 +68,8 @@ class Chat extends React.Component {
 const mapStateToProps = (state) => ({
   user: state.user,
   messages: state.histories[state.currentRoom],
-	members: state.memberLists[state.currentRoom],
-	currentRoom: state.currentRoom,
+  members: state.memberLists[state.currentRoom],
+  currentRoom: state.currentRoom,
 });
 
 // this allows us to use <App /> in index.js

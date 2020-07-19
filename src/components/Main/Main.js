@@ -13,11 +13,12 @@ class Main extends React.Component {
     } else if (this.props.status === "OKAY") {
       return (
         <>
-          <Box name="main" flexGrow={1}>
+          <Box name="main-row" flexGrow={1}>
+						<Box name="main-col" height="100%" maxHeight="100%" minHeight="100%">
             <Box name="header" flexGrow={1}>
               <Nav />
             </Box>
-            <Box name="body" display="flex" flexDirection="row" height="100%">
+            <Box name="body" display="flex" flexDirection="row" height="calc(100% - 25px)">
               <Box
                 name="left"
                 width={200}
@@ -27,13 +28,14 @@ class Main extends React.Component {
               >
                 <TopicExplorer />
               </Box>
-							<Box name="center" flexGrow={1}>
+							<Box name="center" flex="1 0 auto" padding={1}>
 								<Chat />
 							</Box>
               <Box name="right" display="flex" width={200}>
                 <MemberList />
               </Box>
             </Box>
+						</Box>
           </Box>
           
         </>

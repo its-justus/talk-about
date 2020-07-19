@@ -5,17 +5,11 @@ import ChatMessage from "../ChatMessage/ChatMessage";
 
 class ChatStream extends React.Component {
 
-	containerStyle = {
-		height: "600px",
-		overflowY: "scroll",
-		overflowAnchor: "none",
-	};
-
   render() {
     return (
       <>
         {`Room#${this.props.currentRoom} Topic: ${this.props.topic}`}
-        <div style={this.containerStyle}>
+        <div>
           {this.props.messages?.map((cur, i) => {
             return (
               <ChatMessage
