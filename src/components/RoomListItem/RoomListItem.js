@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden } from "@material-ui/core";
+import { Grid, Box, Hidden, Typography } from "@material-ui/core";
 
 class RoomListItem extends React.Component {
   select = () => {
@@ -13,7 +13,10 @@ class RoomListItem extends React.Component {
   render() {
     return (
       <li onClick={this.select} style={{}}>
-        {this.props.topics[this.props.room.topic_id]}#{this.props.room.id}
+				<Typography variant="body1">
+				{this.props.topics[this.props.room.topic_id]}#{this.props.room.id}
+				</Typography>
+        
       </li>
     );
   }

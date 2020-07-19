@@ -8,7 +8,7 @@ import Box from "@material-ui/core/Box";
 
 const Nav = (props) => { 
   return (
-  <Box bgcolor="secondary.light" height="25px" >
+  <Box bgcolor="secondary.light" height="25px" alignItems="center">
     <Grid container justify="space-between" alignItems="center">
       <Grid item xs justify="flex-start">
         <Typography variant="overline" color="primary">

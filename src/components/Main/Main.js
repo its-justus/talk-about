@@ -32,7 +32,8 @@ class Main extends React.Component {
                 <Box
                   name="left"
                   width={200}
-                  padding={1}
+									padding={1}
+									flexShrink={0}
                   bgcolor="background.default"
                   color="black.main"
                 >
@@ -50,7 +51,8 @@ class Main extends React.Component {
                 <Box
                   name="right"
                   display="flex"
-                  width={200}
+									width={200}
+									flexShrink="0"
                   bgcolor="background.default"
                   color="black.main"
                 >

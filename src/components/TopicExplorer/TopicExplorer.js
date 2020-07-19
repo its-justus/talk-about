@@ -84,7 +84,7 @@ class TopicExplorer extends React.Component {
                     }
                     key={`poptopic-${i}`}
                   >
-                    {cur.name}
+                    <Typography variant="body1">{cur.name}</Typography>
                   </li>
                 ))}
               </List>
