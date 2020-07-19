@@ -14,15 +14,22 @@ class Chat extends React.Component {
     console.log("Chat.componentDidMount");
   };
 
-  sendMessage = (event) => {
+  sendMessage = () => {
     console.log("sendMessage");
-    event.preventDefault();
     this.props.dispatch({
       type: "SEND_MESSAGE",
       payload: { text: this.state.messageInput, room: this.props.currentRoom },
     });
     this.setState({ messageInput: "" });
   };
+
+	handleKeyPress = (event) => {
+		console.log(event.key, event.shiftKey);
+		// if user presses enter we send the message, shift ignores this
+		if(event.key === "Enter" && !event.shiftKey){
+			this.sendMessage()
+		} 
+	}
 
   // // this is some hacky shit to keep the scroll at the bottom :)
   // scrollToBottom = () => {
@@ -40,7 +47,6 @@ class Chat extends React.Component {
           <ChatStream />
         </Box>
         <Box height="113px">
-          <form onSubmit={this.sendMessage}>
             <TextField
 							name="chat-input"
               required
@@ -53,9 +59,9 @@ class Chat extends React.Component {
               value={this.state.messageInput}
               onChange={(event) =>
                 this.setState({ messageInput: event.target.value })
-              }
+							}
+							onKeyPress={this.handleKeyPress}
             />
-          </form>
         </Box>
       </Box>
     );
