@@ -37,7 +37,7 @@ const theme = createMuiTheme({
       paddingLeft: 5,
       lineHeight: 1,
       cursor: "default",
-    },
+		},
   },
 	test: {
 		color: '#ff0000',
