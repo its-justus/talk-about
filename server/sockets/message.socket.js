@@ -1,11 +1,17 @@
 const pool = require("../modules/pool");
 
+/**
+ * send queries the database to insert a new message
+ *
+ * @param {messageObj} payload object containing the message and which room it is for
+ * @param {socketObj} socket socket object used for emitting to user or the rest of the room
+ * @param {*} io io object used for emitting to room (including user) or all rooms
+ */
 function send(payload, socket, io) {
   const { user } = socket.request.session.passport;
   const queryText = `INSERT INTO message (author_id, room_id, text)
 			VALUES ($1, $2, $3)
 			RETURNING *;`;
-  // TODO ADD ROOM SPECIFIER TO queryValues
   const queryValues = [user, payload.room, payload.text];
   pool
     .query(queryText, queryValues)
@@ -17,6 +23,13 @@ function send(payload, socket, io) {
     });
 }
 
+/**
+ * edit queries the database to edit a message
+ *
+ * @param {messageObj} payload object containing the message id
+ * @param {socketObj} socket socket object used for emitting to user or the rest of the room
+ * @param {*} io io object used for emitting to room (including user) or all rooms
+ */
 function edit(payload, socket, io) {
   const { user } = socket.request.session.passport;
 
@@ -24,30 +37,34 @@ function edit(payload, socket, io) {
   let queryText = `SELECT * FROM message
 		WHERE id=$1;`;
   let queryValues = [payload.id];
-
   pool
     .query(queryText, queryValues)
     .then((result) => {
-      // if the message author matches our current user, they can delete it
+      // if the message author matches our current user, they can edit it
       if (result.rows[0] && result.rows[0].author_id === user) {
         queryText = `UPDATE message
-			SET text = $1 
-			WHERE id = $2
-			RETURNING *;`;
+					SET text = $1 
+					WHERE id = $2
+					RETURNING *;`;
         queryValues = [payload.text, payload.id];
-        // TODO ADD ROOM SPECIFIER TO queryValues
         pool
           .query(queryText, queryValues)
           .then((res) => {
             let message = res.rows[0];
-            // let all members of room know to update the message
+            // no errors, let all members of room know to update the message
             io.to(message.room_id).emit("message.update", message);
           })
           .catch((error) => {
-            socket.emit("message.error", "error deleting message");
+            socket.emit(
+              "message.error",
+              "message.edit error: error updating message"
+            );
           });
       } else {
-        socket.emit("message.error");
+        socket.emit(
+          "message.error",
+          "message.edit error: message does not exist"
+        );
       }
     })
     .catch((error) => {
@@ -56,6 +73,13 @@ function edit(payload, socket, io) {
     });
 }
 
+/**
+ * delete deletes a given message from the database
+ *
+ * @param {messageObj} payload object containing the message id
+ * @param {socketObj} socket socket object used for emitting to user or the rest of the room
+ * @param {*} io io object used for emitting to room (including user) or all rooms
+ */
 function deleteMessage(payload, socket, io) {
   const { user } = socket.request.session.passport;
 
@@ -95,5 +119,5 @@ function deleteMessage(payload, socket, io) {
 module.exports = {
   send: send,
   edit: edit,
-  deleteMessage: deleteMessage,
+  del: deleteMessage,
 };

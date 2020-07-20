@@ -28,40 +28,27 @@ const pool = require("../modules/pool");
  */
 async function joinTopic(payload, socket, io) {
   try {
-		// initialize performance metric
-		const startTime = Date.now();
-		// pull our user id from our session
+    const startTime = Date.now();
     const { user } = socket.request.session.passport;
-		// define our topic for readability
-		const topic = payload;
-		
-    // begin our transaction
+    const topic = payload;
+
+		// begin our series of pool queries
     pool.query("BEGIN");
-
-    // get room with topic that user can join (user not already in room)
     let room = await getRoom(topic, user);
-
-    // get our user info
     const userObj = await getUser(user);
-    // add our user to the member list
-    room.members.push(userObj);
+		addUserToRoom(userObj.id, room.id);
 
-    // send our new room to the user
-    socket.emit("room.joined", room);
-    // add the user to the room in the database
-    addUserToRoom(userObj.id, room.id);
-    // add the user to the socket room
+		room.members.push(userObj);
+		// let the user know which room they are joining
+		socket.emit("room.joined", room);
     socket.join(room.id, () => {
       // let others in the room know the user joined
       io.to(room.id).emit("member.joined", userObj);
     });
 
-		// end our transaction successfully
-		// TODO this isn't working quite right. rollback does not prevent
-		// topic from being added
-		pool.query("COMMIT");
+		// commit our queries
+    pool.query("COMMIT");
 
-		// log some performance data
     console.log(`joinTopic runtime: ${Date.now() - startTime}ms`);
   } catch (error) {
     pool.query("ROLLBACK");
@@ -81,10 +68,8 @@ async function joinTopic(payload, socket, io) {
  * @returns {roomObj} a room object the user will then join
  */
 async function getRoom(topic, uid) {
-	// get our max member count from the environment, or default to 7
-	const MAX_MEMBER_COUNT = process.env.MAX_MEMBER_COUNT || 7;
+  const MAX_MEMBER_COUNT = process.env.MAX_MEMBER_COUNT || 7;
   try {
-    // define our query
     // Our query selects a single room that has a topic matching our topic
     // param, fewer members that MAX_MEMBER_COUNT, and the user is not
     // already a member of. If there are no such rooms our result.rows is an
@@ -103,9 +88,7 @@ async function getRoom(topic, uid) {
 				LIMIT 1;`;
     query.values = [topic, uid, MAX_MEMBER_COUNT];
     query.result = await pool.query(query.text, query.values);
-		
-		// assign our result
-		let room = query.result.rows[0];
+    let room = query.result.rows[0];
 
     // if we didn't get a room back, make one
     if (!room) {
@@ -113,15 +96,11 @@ async function getRoom(topic, uid) {
       room.topic_id = room.topic.id;
     } else {
       // otherwise get the rest of our room data
-      // save topic info
       room.topic = { id: room.topic_id, name: topic };
-      // get room members
       room.members = await getMembers(room.id);
-      // get room history
       room.history = await getHistory(room.id);
     }
 
-    // return our room
     return room;
   } catch (error) {
     console.log("topic.getRoom error", error);
@@ -138,7 +117,6 @@ async function getRoom(topic, uid) {
 async function getHistory(roomID) {
   const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
   try {
-    // define our query
     const query = {};
     query.text = `SELECT * FROM message
 			WHERE room_id = $1
@@ -147,7 +125,6 @@ async function getHistory(roomID) {
     query.values = [roomID, MAX_HISTORY_MESSAGES];
     query.result = await pool.query(query.text, query.values);
 
-    // return our result
     return query.result.rows;
   } catch (error) {
     console.log("getHistory error:", error);
@@ -163,14 +140,12 @@ async function getHistory(roomID) {
  */
 async function getUser(userID) {
   try {
-		// define our query
     const query = {};
     query.text = `SELECT id, username FROM account WHERE id = $1;`;
     query.values = [userID];
     query.result = await pool.query(query.text, query.values);
-		
-		// return our result
-		return query.result.rows[0];
+
+    return query.result.rows[0];
   } catch (error) {
     console.log("getRooms Error:", error);
     throw error;
@@ -192,9 +167,9 @@ function addUserToRoom(userID, roomID) {
 			VALUES ($1, $2);`;
     query.values = [userID, roomID];
     query.result = pool.query(query.text, query.values);
-		
-		// return null since we don't have any data
-		return null;
+
+    // return null since we don't have any data
+    return null;
   } catch (error) {
     console.log("getRooms Error:", error);
     throw error;
@@ -210,7 +185,6 @@ function addUserToRoom(userID, roomID) {
  */
 async function getMembers(roomID) {
   try {
-    // define our query
     const query = {};
     query.text = `SELECT account.id, account.username FROM room_member
 			JOIN account ON account.id = room_member.account_id
@@ -219,7 +193,6 @@ async function getMembers(roomID) {
     query.values = [roomID];
     query.result = await pool.query(query.text, query.values);
 
-    // return our results
     return query.result.rows;
   } catch (error) {
     console.log("getMembers error:", error);
@@ -235,29 +208,22 @@ async function getMembers(roomID) {
  */
 async function makeRoom(topic) {
   try {
-    // define our room object
+		// initialize room
     const room = {};
-
-    // first get the topic object for our topic
     room.topic = await getTopic(topic);
-
-    // create our member and history
     room.members = [];
     room.history = [];
 
-    // add our room to the database
     const query = {};
     query.text = `INSERT INTO room (topic_id)
 			VALUES ($1)
 			RETURNING *;`;
     query.values = [room.topic.id];
     query.result = await pool.query(query.text, query.values);
-		
-		// add our new room data to the room object
+
     room.id = query.result.rows[0].id;
     room.created_at = query.result.rows[0].created_at;
 
-    // return our new room
     return room;
   } catch (error) {
     console.log("makeRoom error:", error);
@@ -274,7 +240,6 @@ async function makeRoom(topic) {
  */
 async function getTopic(topic) {
   try {
-    // OPTIMIZATION: combine this into one query. pretty sure this is doable
     // first get the topic if it exists
     const query = {};
     query.text = `SELECT * FROM topic WHERE name = $1;`;
@@ -292,7 +257,6 @@ async function getTopic(topic) {
       topicObj = query.result.rows[0];
     }
 
-    // return the topic
     return topicObj;
   } catch (error) {
     console.log("getTopic error:", error);

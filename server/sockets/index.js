@@ -17,7 +17,7 @@ async function rootSocketHandler(socket, io) {
 	// Message Handlers
 	socket.on("message.send", (data) => messageHandler.send(data, socket, io));
 	socket.on("message.edit", (data) => messageHandler.edit(data, socket, io));
-	socket.on('message.delete', (data) => messageHandler.deleteMessage(data, socket, io));
+	socket.on('message.delete', (data) => messageHandler.del(data, socket, io));
 
 	// Topic Handlers
 	socket.on("topic.join", (data) => topicHandler.joinTopic(data, socket, io));

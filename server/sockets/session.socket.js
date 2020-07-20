@@ -18,9 +18,7 @@ const pool = require("../modules/pool");
  */
 async function start(data, socket, io) {
   try {
-    // initialize our performance metric
     const startTime = Date.now();
-    // pull our user id from our passport session
     const { user } = socket.request.session.passport;
 
     // OPTIMIZATION: combine these functions into a single pg query.
@@ -43,8 +41,6 @@ async function start(data, socket, io) {
     // query db for popular topics
     const popularTopics = await getPopularTopics();
     socket.emit("topic.popularTopics", popularTopics);
-
-    // let the client know we're all done
     socket.emit("session.ready");
 
     // log some performance data
@@ -63,15 +59,13 @@ async function start(data, socket, io) {
  */
 async function getUserRooms(userID) {
   try {
-    // define our query
     const query = {};
     query.text = `SELECT room.* FROM room
 			JOIN room_member ON room.id = room_member.room_id
 			WHERE room_member.account_id = $1;`;
     query.values = [userID];
-    query.result = await pool.query(query.text, query.values);
-
-    // return our result
+		query.result = await pool.query(query.text, query.values);
+		
     return query.result.rows;
   } catch (error) {
     console.log("getUserRooms error:", error);
@@ -87,14 +81,12 @@ async function getUserRooms(userID) {
  */
 async function getTopic(topicID) {
   try {
-    // define our query
     const query = {};
     query.text = `SELECT topic.* FROM topic
 			WHERE topic.id = $1;`;
     query.values = [topicID];
     query.result = await pool.query(query.text, query.values);
 
-    // return our result
     return query.result.rows[0];
   } catch (error) {
     console.log("getTopic error:", error);
@@ -110,7 +102,6 @@ async function getTopic(topicID) {
  */
 async function getRoomMembers(roomID) {
   try {
-    // define our query
     const query = {};
     query.text = `SELECT account.id, account.username FROM account
 			JOIN room_member ON account.id = room_member.account_id
@@ -118,7 +109,6 @@ async function getRoomMembers(roomID) {
     query.values = [roomID];
     query.result = await pool.query(query.text, query.values);
 
-    // return our results
     return query.result.rows;
   } catch (error) {
     console.log("getRoomMembers error:", error);
@@ -136,7 +126,6 @@ async function getRoomMembers(roomID) {
 async function getRoomHistory(roomID) {
   try {
     const MAX_HISTORY_MESSAGES = process.env.MAX_HISTORY_MESSAGES || 20;
-    // define our query
     const query = {};
     query.text = `SELECT message.* FROM message
 		WHERE room_id = $1
@@ -145,7 +134,6 @@ async function getRoomHistory(roomID) {
     query.values = [roomID, MAX_HISTORY_MESSAGES];
     query.result = await pool.query(query.text, query.values);
 
-    // return our result
     return query.result.rows;
   } catch (error) {
     console.log("getRoomHistory error:", error);
@@ -160,13 +148,8 @@ async function getRoomHistory(roomID) {
  * @returns {array} an array of topic objects
  */
 async function getPopularTopics() {
-  // OPTIMIZATION: have a table of topics by popularity that is
-  // maintained by the database. this function would then just pick the top 10
-  // of that table. this might be a bad idea though. perhaps have it calculated
-  // every 10 minutes or so...
   try {
     const MAX_POPULAR_TOPICS = process.env.MAX_POPULAR_TOPICS || 10;
-    // define our query
     const query = {};
     query.text = `SELECT topic.*, count(room) AS rooms FROM topic
 			JOIN room ON topic.id = room.topic_id
@@ -176,7 +159,6 @@ async function getPopularTopics() {
     query.values = [MAX_POPULAR_TOPICS];
     query.result = await pool.query(query.text, query.values);
 
-    // return our result
     return query.result.rows;
   } catch (error) {
     console.log("getPopularTopics error:", error);
