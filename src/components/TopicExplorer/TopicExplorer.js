@@ -7,6 +7,7 @@ import {
   List,
   IconButton,
   TextField,
+	Divider,
 } from "@material-ui/core";
 import RoomListItem from "../RoomListItem/RoomListItem";
 import RefreshIcon from "@material-ui/icons/Refresh";
@@ -83,6 +84,7 @@ class TopicExplorer extends React.Component {
             <Box justifySelf="flex-start">
               <Typography variant="h6">Popular Topics</Typography>
             </Box>
+						
             <Box justifySelf="flex-end">
               <IconButton
                 type="button"
@@ -95,7 +97,9 @@ class TopicExplorer extends React.Component {
                 <RefreshIcon />
               </IconButton>
             </Box>
+						
           </Box>
+					<Divider />
           <Box
             display="flex"
             flexDirection="column"
@@ -132,6 +136,7 @@ class TopicExplorer extends React.Component {
           minHeight="150px"
         >
           <Typography variant="h6">My Rooms</Typography>
+					<Divider />
           <Box
             display="flex"
             flexDirection="column"

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography, Divider } from "@material-ui/core";
 
 class MemberList extends React.Component {
   render() {
@@ -17,6 +17,7 @@ class MemberList extends React.Component {
         overflow="hidden"
       >
         <Typography variant="h6">Room Members</Typography>
+				<Divider />
         {this.props.members?.map((cur, i) => (
           <Typography key={`member-${i}`} variant="subtitle1" style={{ fontSize: 16 }}>
             {cur.username}
