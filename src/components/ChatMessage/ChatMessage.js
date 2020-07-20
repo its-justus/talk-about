@@ -75,7 +75,7 @@ class ChatMessage extends React.Component {
           onBlur={() => this.setState({ editing: false })}
         >
           <Box flexGrow={1} name="author">
-            <Typography variant="h6" color="secondary.main">
+            <Typography variant="h6" color="textPrimary">
               {author}
             </Typography>
           </Box>
