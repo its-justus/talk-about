@@ -62,7 +62,7 @@ class ChatMessage extends React.Component {
         width="100%"
         maxWidth="100%"
         display="flex"
-        flexDirection="column"
+				flexDirection="column"
       >
         <Box paddingY={1} paddingX={2}>
           <Divider variant="middle" />
@@ -80,7 +80,7 @@ class ChatMessage extends React.Component {
             </Typography>
           </Box>
           <Box name="options">
-            {!this.state.editing && (
+            {!this.state.editing && this.props.user.id === author_id && (
               <>
                 <IconButton
                   type="button"

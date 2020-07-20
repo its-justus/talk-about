@@ -18,7 +18,7 @@ class MemberList extends React.Component {
       >
         <Typography variant="h6">Room Members</Typography>
         {this.props.members?.map((cur, i) => (
-          <Typography variant="subtitle1" style={{ fontSize: 16 }}>
+          <Typography key={`member-${i}`} variant="subtitle1" style={{ fontSize: 16 }}>
             {cur.username}
           </Typography>
         ))}
