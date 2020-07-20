@@ -1,24 +1,18 @@
 const express = require("express");
 require("dotenv").config();
-
 const bodyParser = require("body-parser");
 const sessionMiddleware = require("./modules/session-middleware");
-
 const passport = require("./strategies/user.strategy");
 
 // Route includes
 const userRouter = require("./routes/user.router");
 const topicRouter = require("./routes/topic.router");
-const pool = require("./modules/pool");
 
 // app setup
 const app = express()
-  // body-parser
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
-  // session middleware
   .use(sessionMiddleware)
-  // passport stuff
   .use(passport.initialize())
   .use(passport.session())
   /* Routes */
