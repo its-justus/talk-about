@@ -13,10 +13,6 @@ class LoginPage extends Component {
     username: "",
     password: "",
   };
-  componentDidMount() {
-    // clear a pesky warning from an experimental Material UI component (Snackbar + MuiAlert)
-    console.clear();
-  }
 
   login = (event) => {
     event.preventDefault();
