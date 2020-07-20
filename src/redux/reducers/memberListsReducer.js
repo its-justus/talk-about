@@ -26,11 +26,8 @@ const memberListsReducer = (state = {}, action) => {
       return newState;
     case "ADD_MEMBER_TO_ROOM":
 			// action.payload = {room: integer, member: memberObject}
-			if(!newState[action.payload.room]){
-				newState[action.payload.room] = [];
-			} 
       let members = newState[action.payload.room];
-      newState[action.payload.room] = members.push(action.payload.member);
+      newState[action.payload.room] = [...members, action.payload.member];
       return newState;
     case "RESET_MEMBER_LISTS":
       return {};

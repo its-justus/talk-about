@@ -46,7 +46,7 @@ async function joinTopic(payload, socket, io) {
     socket.join(room.id, () => {
 			console.log("joined room:", room.id);
       // let others in the room know the user joined
-      io.to(room.id).emit("member.new", userObj);
+      socket.to(room.id).emit("member.new", {room: room.id, member: userObj});
     });
 
 		// commit our queries

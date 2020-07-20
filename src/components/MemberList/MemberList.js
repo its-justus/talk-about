@@ -4,6 +4,7 @@ import { Box, Typography } from "@material-ui/core";
 
 class MemberList extends React.Component {
   render() {
+		console.log(this.props.members);
     return (
       <Box
         padding={1}
