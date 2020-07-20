@@ -1,15 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-  Grid,
   Box,
-  Hidden,
   TextField,
   withTheme,
   Divider,
   Typography,
 } from "@material-ui/core";
-import ChatMessage from "../ChatMessage/ChatMessage";
 import ChatStream from "../ChatStream/ChatStream";
 
 class Chat extends React.Component {

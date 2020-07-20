@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Typography, Button } from "@material-ui/core";
+import {Button } from "@material-ui/core";
 
 const LogOutButton = (props) => (
 	<Button color="primary.dark" size="small" onClick={() => props.dispatch({ type: "LOGOUT" })}>

@@ -5,18 +5,13 @@ import {
   Redirect,
   Switch,
 } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline';
 
 import {connect} from 'react-redux';
-
-import Nav from '../Nav/Nav';
-import Footer from '../Footer/Footer';
 
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
 
 import AboutPage from '../AboutPage/AboutPage';
 import Main from '../Main/Main';
-import InfoPage from '../InfoPage/InfoPage';
 import Box from '@material-ui/core/Box';
 
 import './App.css';

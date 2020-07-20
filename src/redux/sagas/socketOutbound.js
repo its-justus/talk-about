@@ -1,4 +1,4 @@
-import {takeEvery, takeLatest} from 'redux-saga/effects';
+import {takeEvery} from 'redux-saga/effects';
 // outbound handles emission of sagas over the socket
 
 // handles starting our session with the server

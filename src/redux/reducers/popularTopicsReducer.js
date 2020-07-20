@@ -10,8 +10,9 @@ const popularTopicsReducer = (state = [], action) => {
   let newState = [ ...state ];
   switch (action.type) {
     case "SET_POPULAR_TOPICS":
+			newState = [...action.payload];
       // action.payload = {topic.id1: topic.name1, topic.id2: topic.name2...}
-			return [ ...action.payload ];
+			return newState;
     case "RESET_POPULAR_TOPICS":
       // action.payload = N/A
       return {};

@@ -1,19 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-  Grid,
   Box,
-  Hidden,
   Typography,
   withTheme,
   List,
-  Button,
   IconButton,
   TextField,
 } from "@material-ui/core";
 import RoomListItem from "../RoomListItem/RoomListItem";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import Divider from "@material-ui/core/Divider";
 
 class TopicExplorer extends React.Component {
   state = {

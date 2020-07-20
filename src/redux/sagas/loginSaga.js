@@ -1,6 +1,5 @@
 import { put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
-import { BrowserRouter } from 'react-router-dom';
 
 // worker Saga: will be fired on "LOGIN" actions
 function* loginUser(action) {

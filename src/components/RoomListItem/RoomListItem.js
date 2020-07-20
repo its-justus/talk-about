@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 
 class RoomListItem extends React.Component {
   select = () => {
