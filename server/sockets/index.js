@@ -6,23 +6,17 @@ async function rootSocketHandler(socket, io) {
   if (!socket.request.session.passport) {
 		console.log("socket connected with no passport session, exiting socket setup");
     return;
-  } // exit if passport session doesn't exist
-
-  // grab our user id from the session
+	} // exit if passport session doesn't exist
+	
 	const {user} = socket.request.session.passport;
 	console.log(`User connected, id: ${user}`);
 
-	// session startup handler
+	// Session startup handler
 	socket.on("session.start", (data) => session.start(data, socket, io));
-
-  // socket handlers
 	
 	// Message Handlers
-	// message from user handler
 	socket.on("message.send", (data) => messageHandler.send(data, socket, io));
-	// edit message handler
 	socket.on("message.edit", (data) => messageHandler.edit(data, socket, io));
-	// delete message
 	socket.on('message.delete', (data) => messageHandler.deleteMessage(data, socket, io));
 
 	// Topic Handlers
