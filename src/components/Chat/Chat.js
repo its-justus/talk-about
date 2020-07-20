@@ -1,7 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Box, Hidden } from "@material-ui/core";
+import {
+  Grid,
+  Box,
+  Hidden,
+  TextField,
+  withTheme,
+  Divider,
+  Typography,
+} from "@material-ui/core";
 import ChatMessage from "../ChatMessage/ChatMessage";
+import ChatStream from "../ChatStream/ChatStream";
 
 class Chat extends React.Component {
   state = {
@@ -13,75 +22,53 @@ class Chat extends React.Component {
     console.log("Chat.componentDidMount");
   };
 
-  sendMessage = (event) => {
+  sendMessage = () => {
     console.log("sendMessage");
-    event.preventDefault();
     this.props.dispatch({
       type: "SEND_MESSAGE",
-      payload: {text: this.state.messageInput, room: this.props.currentRoom},
+      payload: {
+        text: this.state.messageInput,
+        room: this.props.currentRoom.id,
+      },
     });
-    	this.setState({ messageInput: "" });
+    this.setState({ messageInput: "" });
   };
 
-  // // this is some hacky shit to keep the scroll at the bottom :)
-  // scrollToBottom = () => {
-  // 	this.messagesEnd.scrollIntoView({behavior: 'smooth'});
-  // }
-
-  // componentDidUpdate() {
-  // 	this.scrollToBottom();
-  // }
+  handleKeyPress = (event) => {
+		if( this.state.messageInput.trim() === ""){
+			// if the user pressed enter on an empty input ignore it
+			this.setState({messageInput: ""})
+		} else if (event.key === "Enter" && !event.shiftKey) {
+      this.sendMessage();
+    } 
+  };
 
   render() {
-    const containerStyle = {
-      height: "400px",
-      overflowY: "scroll",
-      overflowAnchor: "none",
-    };
     return (
-      <div>
-        <Grid container>
-          <Grid item xs={9}>
-            Messages:
-            <div style={containerStyle}>
-              {this.props.messages?.map((cur, i) => {
-                let author;
-                const { members } = this.props;
-                for (let index in members) {
-                  if (cur.author_id === members[index].id) {
-                    author = members[index].username;
-                    break;
-                  }
-                }
-                return (
-                  <ChatMessage
-										key={`message-${i}`}
-										id={cur.id}
-                    author={author}
-                    authorID={cur.author_id}
-                    text={cur.text}
-                  />
-                );
-              })}
-              {/* the div below is used for anchoring the chat at the bottom */}
-              <div ref={(el) => (this.messagesEnd = el)}></div>
-            </div>
-            <br />
-            <form onSubmit={this.sendMessage}>
-              <input
-                required
-                width="100%"
-                name="messageInput"
-                type="text"
-                value={this.state.messageInput}
-                onChange={(event) =>
-                  this.setState({ messageInput: event.target.value })
-                }
-              />
-            </form>
-          </Grid>
-        </Grid>
-      </div>
+      <Box height="100%">
+        <Typography variant="h6">
+          {`Room#${this.props.currentRoom.id} Topic: ${this.props.topic}`}
+        </Typography>
+        <Divider />
+        <ChatStream />
+        <Box height="113px">
+          <TextField
+            name="chat-input"
+            required
+            fullWidth
+            multiline
+            rows={4}
+            rowsMax={4}
+            type="text"
+            variant="outlined"
+            value={this.state.messageInput}
+            onChange={(event) =>
+              this.setState({ messageInput: event.target.value })
+            }
+            onKeyPress={this.handleKeyPress}
+          />
+        </Box>
+      </Box>
     );
   }
 }
@@ -91,10 +78,11 @@ class Chat extends React.Component {
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
   user: state.user,
-  messages: state.histories[state.currentRoom],
-	members: state.memberLists[state.currentRoom],
-	currentRoom: state.currentRoom,
+  messages: state.histories[state.currentRoom.id],
+  members: state.memberLists[state.currentRoom.id],
+  topic: state.topics[state.currentRoom.topic_id],
+  currentRoom: state.currentRoom,
 });
 
 // this allows us to use <App /> in index.js
-export default connect(mapStateToProps)(Chat);
+export default withTheme(connect(mapStateToProps)(Chat));

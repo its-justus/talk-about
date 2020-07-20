@@ -63,6 +63,11 @@ function* logoutUser(action) {
     // the client-side code know the user is logged out
 		yield put({ type: 'UNSET_USER' });
 
+		// clear our current room, rooms, and histories
+		yield put({ type: 'RESET_CURRENT_ROOM' });
+		yield put({ type: 'RESET_ROOMS' });
+		yield put({ type: 'RESET_HISTORIES' });
+
   } catch (error) {
     console.log('Error with user logout:', error);
   }

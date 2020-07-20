@@ -33,15 +33,16 @@ function socketChannel(socket) {
     // Room Events
     // room joined
     socket.on("room.joined", (data) => {
-      console.log("Joined room", data);
+			console.log("Joined room", data);
+			const room = {
+				id: data.id,
+				created_at: data.created_at,
+				topic_id: data.topic_id,
+			}
       // add our room to the rooms reducer
       dispatch({
         type: "ADD_ROOM",
-        payload: {
-          id: data.id,
-          created_at: data.created_at,
-          topic_id: data.topic_id,
-        },
+        payload: room,
       });
       // add the room topic to the topics reducer
       dispatch({
@@ -61,7 +62,7 @@ function socketChannel(socket) {
 			// set this room as our current room
 			dispatch({
 				type: "SET_CURRENT_ROOM",
-				payload: data.id,
+				payload: room,
 			})
     });
 

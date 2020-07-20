@@ -8,7 +8,11 @@ const router = express.Router();
 router.get('/', (req, res) => {
 	console.log("ROUTE: GET /api/topic/");
 	
-	const queryText = `SELECT * FROM topic;`
+	const queryText = `SELECT topic.* FROM topic
+		JOIN room ON topic.id = room.topic_id
+		GROUP BY topic.id
+		ORDER BY count(room.id) DESC
+		LIMIT 10;`
 	const queryValues = [];
 	pool.query(queryText, queryValues)
 		.then((result) => {
