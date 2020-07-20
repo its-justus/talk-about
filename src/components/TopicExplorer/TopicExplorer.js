@@ -9,7 +9,7 @@ import {
   List,
   Button,
   IconButton,
-	TextField,
+  TextField,
 } from "@material-ui/core";
 import RoomListItem from "../RoomListItem/RoomListItem";
 import RefreshIcon from "@material-ui/icons/Refresh";
@@ -28,79 +28,128 @@ class TopicExplorer extends React.Component {
 
   render() {
     return (
-      <Box style={{ maxHeight: "100%", overflow: "auto" }}>
-        <Grid container spacing={1}>
-          <Grid item name="user-data" xs={12}>
-            <Box bgcolor="primary.light" padding={1} borderRadius={5}>
-              <Typography variant="h6">{this.props.user.username}</Typography>
+      <Box
+        name="topic-explorer"
+        display="flex"
+        flexDirection="column"
+        height="100%"
+				maxHeight="100%"
+				overflow="auto"
+      >
+        <Box
+          bgcolor="primary.light"
+          display="flex"
+          flexDirection="column"
+          flexShrink={1}
+          padding={1}
+          borderRadius={5}
+          marginBottom={0.5}
+        >
+          <Typography variant="h6">{this.props.user.username}</Typography>
+        </Box>
+        <Box
+          bgcolor="secondary.light"
+          display="flex"
+          flexDirection="column"
+          flexShrink={1}
+          padding={1}
+          borderRadius={5}
+          marginY={0.5}
+        >
+          <Typography variant="h6">Enter A Topic</Typography>
+          <form onSubmit={this.joinTopic}>
+            <TextField
+              required
+              fullWidth
+              size="small"
+              variant="outlined"
+              minLength={3}
+              type="text"
+              value={this.state.topicInput}
+              onChange={(event) =>
+                this.setState({ topicInput: event.target.value })
+              }
+            />
+          </form>
+        </Box>
+        <Box
+          bgcolor="secondary.light"
+          padding={1}
+          borderRadius={5}
+          marginY={0.5}
+          display="flex"
+          flexShrink={1}
+          flexGrow={1}
+          flexDirection="column"
+          minHeight="200px"
+        >
+          <Box display="flex">
+            <Box justifySelf="flex-start">
+              <Typography variant="h6">Popular Topics</Typography>
             </Box>
-          </Grid>
-          <Grid item name="enter-topic" xs={12}>
-            <Box bgcolor="secondary.light" padding={1} borderRadius={5}>
-              <Typography variant="h6">Enter A Topic</Typography>
-              <form onSubmit={this.joinTopic}>
-                <TextField
-									required
-									fullWidth
-									size="small"
-									variant="outlined"
-                  minLength={3}
-                  type="text"
-                  value={this.state.topicInput}
-                  onChange={(event) =>
-                    this.setState({ topicInput: event.target.value })
+            <Box justifySelf="flex-end">
+              <IconButton
+                type="button"
+                color="primary"
+                size="small"
+                onClick={() =>
+                  this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
+                }
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+            flexShrink={1}
+            overflow="auto"
+          >
+            <List>
+              {this.props.popularTopics?.map((cur, i) => (
+                <li
+                  onClick={() =>
+                    this.props.dispatch({
+                      type: "JOIN_TOPIC",
+                      payload: cur.name,
+                    })
                   }
-                />
-              </form>
-            </Box>
-          </Grid>
-          <Grid item name="popular-topics" xs={12}>
-            <Box bgcolor="secondary.light" padding={1} borderRadius={5}>
-              <Box display="flex">
-                <Box justifySelf="flex-start">
-                  <Typography variant="h6">Popular Topics</Typography>
-                </Box>
-                <Box justifySelf="flex-end">
-                  <IconButton
-                    type="button"
-                    color="primary"
-                    size="small"
-                    onClick={() =>
-                      this.props.dispatch({ type: "REFRESH_POPULAR_TOPICS" })
-                    }
-                  >
-                    <RefreshIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-              <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
-                {this.props.popularTopics?.map((cur, i) => (
-                  <li
-                    onClick={() =>
-                      this.props.dispatch({
-                        type: "JOIN_TOPIC",
-                        payload: cur.name,
-                      })
-                    }
-                    key={`poptopic-${i}`}
-                  >
-                    <Typography variant="body1">{cur.name}</Typography>
-                  </li>
-                ))}
-              </List>
-            </Box>
-          </Grid>
-          <Grid item name="user-rooms" xs={12}>
-            <Box bgcolor="secondary.light" padding={1} borderRadius={5}>
-              <Typography variant="h6">My Rooms</Typography>
-              <List style={{ maxHeight: 200, width: "100%", overflow: "auto" }}>
-                {this.props.rooms?.map((cur, i) => (
-                  <RoomListItem key={`room-${i}`} room={cur} />
-                ))}
-              </List>
-            </Box>
-          </Grid>
-        </Grid>
+                  key={`poptopic-${i}`}
+                >
+                  <Typography variant="body1">{cur.name}</Typography>
+                </li>
+              ))}
+            </List>
+          </Box>
+        </Box>
+        <Box
+          bgcolor="secondary.light"
+          padding={1}
+          borderRadius={5}
+          marginTop={0.5}
+          display="flex"
+          flexShrink={1}
+          flexGrow={1}
+          flexDirection="column"
+          minHeight="150px"
+        >
+          <Typography variant="h6">My Rooms</Typography>
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+            flexShrink={1}
+            overflow="auto"
+          >
+            <List>
+              {this.props.rooms?.map((cur, i) => (
+                <RoomListItem key={`room-${i}`} room={cur} />
+              ))}
+            </List>
+          </Box>
+        </Box>
       </Box>
     );
   }
