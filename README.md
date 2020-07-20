@@ -53,19 +53,19 @@ Before starting installation ensure that all prereqs are installed and working. 
 
 ## Built With
 
-React
-Redux
-Redux Sagas
-Redux Logger
-Socket.io
-pg (Postgres)
-Material-UI
-Passport
-Express
-Node
-bcryptjs
-VSCode
-Balsamiq
+* React
+* Redux
+* Redux Sagas
+* Redux Logger
+* Socket.io
+* pg (Postgres)
+* Material-UI
+* Passport
+* Express
+* Node
+* bcryptjs
+* VSCode
+* Balsamiq
 
 ## Acknowledgement
 Thanks to [Emerging Digital Academy](www.emergingacademy.org) who equipped and helped me to make this application a reality. Also, shout out to [Jake Schaffer](https://github.com/JakeCr8Guru) for helping me out with styling.  
