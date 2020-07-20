@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -45,26 +44,25 @@ class RegisterPage extends Component {
 
   render() {
     return (
-      <Grid container justify="center">
-        <Grid item className="login-title" xs={12}>
-          <Box marginTop={15} margin={5}>
-            <Typography variant="h2" align="center" color="primary">
-              TalkAbout
-            </Typography>
-            <Typography variant="h6" align="center" color="primary">
-              Your place to talk about anything
-            </Typography>
-          </Box>
-        </Grid>
-        <Grid item className="login-form" xs={4}>
+			<Box justifyContent="center" marginTop="20vh"  width="100%" >
+      <Box name="register-container" display="flex" flexDirection="column">
+        <Box name="title">
+          <Typography variant="h2" align="center" color="primary">
+            TalkAbout
+          </Typography>
+          <Typography variant="h6" align="center" color="primary">
+            Your place to talk about anything
+          </Typography>
+        </Box>
           <form onSubmit={this.registerUser}>
-            <Grid container justify="center" alignItems="center" spacing={1}>
-              <Grid item className="login-form-heading" xs={12}>
-                <Typography variant="subtitle2" align="center" color="primary">
-                  Please register a username and password
-                </Typography>
-              </Grid>
-              <Grid item className="login-form-fields" xs={12} align="center">
+					<Box name="register-form" alignContent="center">
+            <Box name="register-message" paddingTop={3} paddingBottom={1}>
+              <Typography variant="subtitle2" align="center" color="primary">
+                Please register a username and password
+              </Typography>
+            </Box>
+            <Box name="fields" textAlign="center">
+              <Box padding={0.5}>
                 <TextField
                   required
                   id="username-input"
@@ -74,8 +72,8 @@ class RegisterPage extends Component {
                   value={this.state.username}
                   onChange={this.handleInputChangeFor("username")}
                 />
-              </Grid>
-              <Grid item className="login-form-fields" xs={12} align="center">
+              </Box>
+              <Box padding={0.5}>
                 <TextField
                   required
                   id="password-input"
@@ -86,8 +84,10 @@ class RegisterPage extends Component {
                   value={this.state.password}
                   onChange={this.handleInputChangeFor("password")}
                 />
-              </Grid>
-              <Grid item className="login-form-register" xs={4} align="center">
+              </Box>
+            </Box>
+            <Box name="buttons" justifyContent="center" display="flex">
+                <Box paddingX={4}>
                 <Button
                   color="primary"
                   onClick={() => {
@@ -96,15 +96,16 @@ class RegisterPage extends Component {
                 >
                   Back
                 </Button>
-              </Grid>
-              <Grid item className="login-form-sign-in" xs={4} align="center">
+              </Box>
+              <Box paddingX={4}>
                 <Button type="submit" color="primary">
-                  Register
+                  {'Register & Sign In'}
                 </Button>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
+						</Box>
           </form>
-        </Grid>
+
         <Snackbar
           open={this.props.errors.registrationMessage}
           autoHideDuration={5 * 1000}
@@ -119,7 +120,8 @@ class RegisterPage extends Component {
             {this.props.errors.registrationMessage}
           </MuiAlert>
         </Snackbar>
-      </Grid>
+      </Box>
+			</Box>
     );
   }
 }

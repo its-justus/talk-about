@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -50,9 +49,9 @@ class LoginPage extends Component {
 
   render() {
     return (
-      <Grid container justify="center">
-        <Grid item className="login-title" xs={12}>
-          <Box marginTop={15} margin={5}>
+      <Box justifyContent="center" marginTop="20vh" width="100%">
+        <Box name="login-container" display="flex" flexDirection="column">
+          <Box name="title">
             <Typography variant="h2" align="center" color="primary">
               TalkAbout
             </Typography>
@@ -60,71 +59,74 @@ class LoginPage extends Component {
               Your place to talk about anything
             </Typography>
           </Box>
-        </Grid>
-        <Grid item className="login-form" xs={4}>
           <form onSubmit={this.login}>
-            <Grid container justify="center" alignItems="center" spacing={1}>
-              <Grid item className="login-form-heading" xs={12}>
+            <Box name="login-form" alignContent="center">
+              <Box name="login-message" paddingTop={3} paddingBottom={1}>
                 <Typography variant="subtitle2" align="center" color="primary">
                   Please sign in
                 </Typography>
-              </Grid>
-              <Grid item className="login-form-fields" xs={12} align="center">
-                <TextField
-                  required
-                  id="username-input"
-                  label="Username"
-                  variant="filled"
-                  value={this.state.username}
-                  color="primary"
-                  onChange={this.handleInputChangeFor("username")}
-                />
-              </Grid>
-              <Grid item className="login-form-fields" xs={12} align="center">
-                <TextField
-                  required
-                  id="password-input"
-                  label="Password"
-                  type="password"
-                  variant="filled"
-                  color="primary"
-                  value={this.state.password}
-                  onChange={this.handleInputChangeFor("password")}
-                />
-              </Grid>
-              <Grid item className="login-form-register" xs={4} align="center">
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    this.props.dispatch({ type: "SET_TO_REGISTER_MODE" });
-                  }}
-                >
-                  Register
-                </Button>
-              </Grid>
-              <Grid item className="login-form-sign-in" xs={4} align="center">
-                <Button type="submit" color="primary">
-                  Sign In
-                </Button>
-              </Grid>
-            </Grid>
+              </Box>
+              <Box name="fields" textAlign="center">
+                <Box padding={0.5}>
+                  <TextField
+                    required
+                    id="username-input"
+                    label="Username"
+                    variant="filled"
+                    value={this.state.username}
+                    color="primary"
+                    onChange={this.handleInputChangeFor("username")}
+                  />
+                </Box>
+                <Box padding={0.5}>
+                  <TextField
+                    required
+                    id="password-input"
+                    label="Password"
+                    type="password"
+                    variant="filled"
+                    color="primary"
+                    value={this.state.password}
+                    onChange={this.handleInputChangeFor("password")}
+                  />
+                </Box>
+              </Box>
+              <Box name="buttons" justifyContent="center" display="flex">
+                <Box paddingX={5}>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      this.props.dispatch({ type: "SET_TO_REGISTER_MODE" });
+                    }}
+                  >
+                    Register
+                  </Button>
+                </Box>
+                <Box paddingX={5}>
+                  <Button type="submit" color="primary">
+                    Sign In
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
           </form>
-        </Grid>
-        <Snackbar
-          open={this.props.errors.loginMessage}
-          autoHideDuration={5 * 1000}
-          onClose={this.handleErrorClose}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="outlined"
+
+          <Snackbar
+            open={this.props.errors.loginMessage}
+            autoHideDuration={5 * 1000}
             onClose={this.handleErrorClose}
-            severity="error"
           >
-            {this.props.errors.loginMessage}
-          </MuiAlert>
-        </Snackbar>
-      </Grid>
+            <MuiAlert
+              elevation={6}
+              variant="outlined"
+              onClose={this.handleErrorClose}
+              severity="error"
+            >
+              {this.props.errors.loginMessage}
+            </MuiAlert>
+          </Snackbar>
+        </Box>
+      </Box>
     );
   }
 }
