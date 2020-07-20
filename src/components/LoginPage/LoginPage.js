@@ -41,7 +41,9 @@ class LoginPage extends Component {
       return;
     }
     this.props.dispatch({ type: "CLEAR_LOGIN_ERROR" });
-  };
+	};
+	
+	componentWillUpdate
 
   render() {
     return (
@@ -108,7 +110,7 @@ class LoginPage extends Component {
           </form>
 
           <Snackbar
-            open={this.props.errors.loginMessage}
+            open={(this.props.errors.loginMessage !== "")}
             autoHideDuration={5 * 1000}
             onClose={this.handleErrorClose}
           >

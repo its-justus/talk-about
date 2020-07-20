@@ -28,6 +28,7 @@ const pool = require("../modules/pool");
  */
 async function joinTopic(payload, socket, io) {
   try {
+		console.log("joinTopic");
     const startTime = Date.now();
     const { user } = socket.request.session.passport;
     const topic = payload;
@@ -41,9 +42,11 @@ async function joinTopic(payload, socket, io) {
 		room.members.push(userObj);
 		// let the user know which room they are joining
 		socket.emit("room.joined", room);
+		
     socket.join(room.id, () => {
+			console.log("joined room:", room.id);
       // let others in the room know the user joined
-      io.to(room.id).emit("member.joined", userObj);
+      io.to(room.id).emit("member.new", userObj);
     });
 
 		// commit our queries

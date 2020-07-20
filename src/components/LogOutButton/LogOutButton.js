@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 
 const LogOutButton = (props) => (
   <Button
-    color="primary.dark"
+    color="default"
     size="small"
     onClick={() => props.dispatch({ type: "LOGOUT" })}
   >

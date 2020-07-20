@@ -12,7 +12,6 @@ function startSession(socket, action) {
   }
 }
 
-// handles sending messages to the server
 function sendMessage(socket, action) {
   try {
     // action.payload is expected to be a simple text message,
