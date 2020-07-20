@@ -25,13 +25,10 @@ class App extends Component {
         >
           <Router>
             <Switch>
-              {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
               <Redirect exact from="/" to="/main" />
-              {/* Visiting localhost:3000/about will show the about page.
-            This is a route anyone can see, no login necessary */}
               <ProtectedRoute exact path="/main" component={Main} />
               {/* If none of the other routes matched, we will show a 404. */}
-              <Route render={() => <h1>404</h1>} />
+              <Route render={() => <><h1>You seem to be lost</h1><a href="http://localhost:.3000">Let's go back.</a></>} />
             </Switch>
           </Router>
         </Box>
