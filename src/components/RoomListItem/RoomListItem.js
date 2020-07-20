@@ -13,10 +13,9 @@ class RoomListItem extends React.Component {
   render() {
     return (
       <li onClick={this.select} style={{}}>
-				<Typography variant="body1">
-				{this.props.topics[this.props.room.topic_id]}#{this.props.room.id}
-				</Typography>
-        
+        <Typography variant="body1">
+          {this.props.topics[this.props.room.topic_id]}#{this.props.room.id}
+        </Typography>
       </li>
     );
   }

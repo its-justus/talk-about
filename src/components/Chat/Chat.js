@@ -15,9 +15,6 @@ class Chat extends React.Component {
     messageInput: "",
   };
 
-  componentDidMount = () => {
-  };
-
   sendMessage = () => {
     this.props.dispatch({
       type: "SEND_MESSAGE",
@@ -30,12 +27,12 @@ class Chat extends React.Component {
   };
 
   handleKeyPress = (event) => {
-		if( this.state.messageInput.trim() === ""){
-			// if the user pressed enter on an empty input ignore it
-			this.setState({messageInput: ""})
-		} else if (event.key === "Enter" && !event.shiftKey) {
+    if (this.state.messageInput.trim() === "") {
+      // if the user pressed enter on an empty input ignore it
+      this.setState({ messageInput: "" });
+    } else if (event.key === "Enter" && !event.shiftKey) {
       this.sendMessage();
-    } 
+    }
   };
 
   render() {

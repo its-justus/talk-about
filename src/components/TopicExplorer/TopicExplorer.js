@@ -29,8 +29,8 @@ class TopicExplorer extends React.Component {
         display="flex"
         flexDirection="column"
         height="100%"
-				maxHeight="100%"
-				overflow="auto"
+        maxHeight="100%"
+        overflow="auto"
       >
         <Box
           bgcolor="primary.light"

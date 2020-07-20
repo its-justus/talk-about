@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Box} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import Chat from "../Chat/Chat";
 import MemberList from "../MemberList/MemberList";
 import TopicExplorer from "../TopicExplorer/TopicExplorer";
@@ -32,8 +32,8 @@ class Main extends React.Component {
                 <Box
                   name="left"
                   width={200}
-									padding={1}
-									flexShrink={0}
+                  padding={1}
+                  flexShrink={0}
                   bgcolor="background.default"
                   color="black.main"
                 >
@@ -51,8 +51,8 @@ class Main extends React.Component {
                 <Box
                   name="right"
                   display="flex"
-									width={200}
-									flexShrink="0"
+                  width={200}
+                  flexShrink="0"
                   bgcolor="background.default"
                   color="black.main"
                 >

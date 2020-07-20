@@ -7,12 +7,12 @@
  * Expected action data structures are included in each case.
  */
 const popularTopicsReducer = (state = [], action) => {
-  let newState = [ ...state ];
+  let newState = [...state];
   switch (action.type) {
     case "SET_POPULAR_TOPICS":
-			newState = [...action.payload];
+      newState = [...action.payload];
       // action.payload = {topic.id1: topic.name1, topic.id2: topic.name2...}
-			return newState;
+      return newState;
     case "RESET_POPULAR_TOPICS":
       // action.payload = N/A
       return {};

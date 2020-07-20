@@ -18,8 +18,8 @@
  * to props and referencing this.props.histories[roomID].
  */
 const historiesReducer = (state = {}, action) => {
-	let newState = { ...state };
-	let history;
+  let newState = { ...state };
+  let history;
   switch (action.type) {
     case "SET_HISTORIES":
       // action.payload = {roomID1: historyArray1, roomID2: historyArray2, ...}
@@ -31,33 +31,33 @@ const historiesReducer = (state = {}, action) => {
       return newState;
     case "ADD_MESSAGE":
       // action.payload = {messageObject}
-			history = [...newState[action.payload.room_id]];
-			history.push(action.payload)
+      history = [...newState[action.payload.room_id]];
+      history.push(action.payload);
       newState[action.payload.room_id] = history;
       return newState;
     case "UPDATE_MESSAGE":
-			// action.payload = {messageObject}
-			// get the history for the room the message is in
-			history = [...newState[action.payload.room_id]];
+      // action.payload = {messageObject}
+      // get the history for the room the message is in
+      history = [...newState[action.payload.room_id]];
       // search through our current history newest to oldest for a message id matching our payload
       for (let i = history.length - 1; i >= 0; i--) {
         if (history[i].id === action.payload.id) {
           // if we find it, swap in the new message and break the loop
-					history[i] = {...action.payload};
-					// put our new history back into our histories
-					newState[action.payload.room_id] = history;
+          history[i] = { ...action.payload };
+          // put our new history back into our histories
+          newState[action.payload.room_id] = history;
           break;
         }
-			}
+      }
       return newState;
     case "REMOVE_MESSAGE":
-			// action.payload = {messageObject}
-			// get the history for the message the room is in
-			history = [...newState[action.payload.room_id]]; 
-			// remove the message from that history
-			history = history.filter((cur) => cur.id !== action.payload.id);
-			// put the altered history back into our histories
-			newState[action.payload.room_id] = history;
+      // action.payload = {messageObject}
+      // get the history for the message the room is in
+      history = [...newState[action.payload.room_id]];
+      // remove the message from that history
+      history = history.filter((cur) => cur.id !== action.payload.id);
+      // put the altered history back into our histories
+      newState[action.payload.room_id] = history;
       return newState;
     case "RESET_HISTORIES":
       return [];

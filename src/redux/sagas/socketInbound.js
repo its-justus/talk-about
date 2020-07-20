@@ -29,11 +29,11 @@ function socketChannel(socket) {
     // Room Events
     // room joined
     socket.on("room.joined", (data) => {
-			const room = {
-				id: data.id,
-				created_at: data.created_at,
-				topic_id: data.topic_id,
-			}
+      const room = {
+        id: data.id,
+        created_at: data.created_at,
+        topic_id: data.topic_id,
+      };
       // add our room to the rooms reducer
       dispatch({
         type: "ADD_ROOM",
@@ -53,20 +53,19 @@ function socketChannel(socket) {
       dispatch({
         type: "ADD_MEMBER_LIST",
         payload: { room: data.id, members: data.members },
-			});
-			// set this room as our current room
-			dispatch({
-				type: "SET_CURRENT_ROOM",
-				payload: room,
-			})
+      });
+      // set this room as our current room
+      dispatch({
+        type: "SET_CURRENT_ROOM",
+        payload: room,
+      });
     });
 
-		// Topic Events
+    // Topic Events
     // receive popular topics
-    socket.on("topic.popularTopics", (data) => {
-    });
+    socket.on("topic.popularTopics", (data) => {});
 
-		// Session Events
+    // Session Events
     // server letting us know our session is all ready
     socket.on("session.ready", (data) => {
       dispatch({ type: "SET_STATUS", payload: "OKAY" });

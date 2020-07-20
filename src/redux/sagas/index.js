@@ -1,9 +1,9 @@
-import { all } from 'redux-saga/effects';
-import loginSaga from './loginSaga';
-import registrationSaga from './registrationSaga';
-import userSaga from './userSaga';
-import {openSocket} from './socket';
-import topicsSaga from './topicsSaga';
+import { all } from "redux-saga/effects";
+import loginSaga from "./loginSaga";
+import registrationSaga from "./registrationSaga";
+import userSaga from "./userSaga";
+import { openSocket } from "./socket";
+import topicsSaga from "./topicsSaga";
 
 // rootSaga is the primary saga.
 // It bundles up all of the other sagas so our project can use them.
@@ -17,8 +17,8 @@ export default function* rootSaga() {
   yield all([
     loginSaga(),
     registrationSaga(),
-		userSaga(),
-		openSocket(),
-		topicsSaga(),
+    userSaga(),
+    openSocket(),
+    topicsSaga(),
   ]);
 }

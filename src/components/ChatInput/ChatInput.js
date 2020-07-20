@@ -3,19 +3,10 @@ import { connect } from "react-redux";
 import { Grid, Box, Hidden } from "@material-ui/core";
 
 class ChatInput extends React.Component {
-  
-  state = {
-    
-  };
-
-	
+  state = {};
 
   render() {
-    return (
-      <div>
-        chat input
-      </div>
-    );
+    return <div>chat input</div>;
   }
 }
 

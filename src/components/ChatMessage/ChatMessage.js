@@ -110,7 +110,7 @@ class ChatMessage extends React.Component {
                 >
                   <CancelIcon />
                 </IconButton>
-								<IconButton
+                <IconButton
                   type="button"
                   color="primary"
                   size="small"

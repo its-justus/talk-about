@@ -1,11 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
-import {Button } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 
 const LogOutButton = (props) => (
-	<Button color="primary.dark" size="small" onClick={() => props.dispatch({ type: "LOGOUT" })}>
-		Log Out
-	</Button>
+  <Button
+    color="primary.dark"
+    size="small"
+    onClick={() => props.dispatch({ type: "LOGOUT" })}
+  >
+    Log Out
+  </Button>
 );
 
 // This component doesn't need 'mapStateToProps'

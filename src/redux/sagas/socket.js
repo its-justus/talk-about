@@ -12,33 +12,33 @@ function connect() {
   // connection is established
   return new Promise((resolve) => {
     socket.on("connect", () => {
-			resolve(socket);
+      resolve(socket);
     });
   });
 }
 
 function disconnect(socket) {
-	socket.close();
+  socket.close();
 }
 
 //
 export function* openSocket() {
-	// begin upon receiving the OPEN_SOCKET dispatch
-	while(true){
-  yield take("OPEN_SOCKET");
-  // get our socket from connect
-  const socket = yield call(connect);
+  // begin upon receiving the OPEN_SOCKET dispatch
+  while (true) {
+    yield take("OPEN_SOCKET");
+    // get our socket from connect
+    const socket = yield call(connect);
 
-  // pass our socket to our inbound and outbound sagas
-  yield fork(inbound, socket);
-	yield fork(outbound, socket);
-	
-	// start our session with the server
-	yield put({type: "SESSION_START"});
-	// request popular topics
-	yield put({type: "REFRESH_POPULAR_TOPICS"})
-	
-	// pass our disconnect saga
-	yield takeLeading("CLOSE_SOCKET", disconnect, socket);
-	}
+    // pass our socket to our inbound and outbound sagas
+    yield fork(inbound, socket);
+    yield fork(outbound, socket);
+
+    // start our session with the server
+    yield put({ type: "SESSION_START" });
+    // request popular topics
+    yield put({ type: "REFRESH_POPULAR_TOPICS" });
+
+    // pass our disconnect saga
+    yield takeLeading("CLOSE_SOCKET", disconnect, socket);
+  }
 }
