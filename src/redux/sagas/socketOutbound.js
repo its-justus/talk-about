@@ -4,7 +4,6 @@ import {takeEvery, takeLatest} from 'redux-saga/effects';
 // handles starting our session with the server
 function startSession(socket, action) {
 	try {
-		console.log("start session:", action);
 		// let server know we want to start our session. we are identified on the
 		// backend by our passport session (login) so no payload is needed
 		socket.emit("session.start")
@@ -16,7 +15,6 @@ function startSession(socket, action) {
 // handles sending messages to the server
 function sendMessage(socket, action) {
 	try {
-		console.log("send message:", action);
 		// action.payload is expected to be a simple text message, 
 		socket.emit('message.send', action.payload)
   } catch (error) {
@@ -26,7 +24,6 @@ function sendMessage(socket, action) {
 
 function editMessage(socket, action) {
 	try {
-		console.log("send message:", action);
 		// action.payload is expected to be a simple text message, 
 		socket.emit('message.edit', action.payload)
   } catch (error) {
@@ -36,7 +33,6 @@ function editMessage(socket, action) {
 
 function deleteMessage(socket, action) {
 	try {
-		console.log("delete message:", action);
 		// action.payload is expected to be a simple text message, 
 		socket.emit('message.delete', action.payload)
   } catch (error) {
@@ -46,7 +42,6 @@ function deleteMessage(socket, action) {
 
 function getMessages(socket, action) {
 	try {
-		console.log("get messages:", action);
 		// action.payload is expected to be a room id for which to get messages, 
 		socket.emit('message.getMessages', action.payload)
   } catch (error) {
@@ -56,7 +51,6 @@ function getMessages(socket, action) {
 
 function getMembers(socket, action) {
 	try {
-		console.log("get members:", action);
 		// action.payload is expected to be a simple text message, 
 		socket.emit('member.getMembers', action.payload)
   } catch (error) {
@@ -66,7 +60,6 @@ function getMembers(socket, action) {
 
 function getRooms(socket, action) {
 	try {
-		console.log("get rooms:", action);
 		// action.payload is expected to be a simple text message, 
 		socket.emit('room.getRooms', action.payload)
   } catch (error) {
@@ -76,7 +69,6 @@ function getRooms(socket, action) {
 
 function setRoom(socket, action) {
 	try {
-		console.log("set room:", action);
 		// action.payload is expected to be the id of the room being set as active 
 		socket.emit('room.listen', action.payload)
   } catch (error) {
@@ -86,7 +78,6 @@ function setRoom(socket, action) {
 
 function joinTopic(socket, action) {
 	try {
-		console.log("join topic:", action);
 		// action.payload is expected to be the topic the user wants to join 
 		socket.emit('topic.join', action.payload)
   } catch (error) {

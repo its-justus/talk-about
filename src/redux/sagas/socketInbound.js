@@ -7,33 +7,28 @@ function socketChannel(socket) {
     // Message Events
     // message receive adds a new message to the stream
     socket.on("message.receive", (data) => {
-      console.log("Message received:", data);
       dispatch({ type: "ADD_MESSAGE", payload: data });
     });
 
     // message update edits a certain message if it is already in the stream
     socket.on("message.update", (data) => {
-      console.log("Message updated: ", data);
       dispatch({ type: "UPDATE_MESSAGE", payload: data });
     });
 
     // message remove removes a deleted message from the message reducer
     socket.on("message.remove", (data) => {
-      console.log("Message removed:", data);
       dispatch({ type: "REMOVE_MESSAGE", payload: data });
     });
 
     // Member events
     // member.new is sent when a new member joins the room
     socket.on("member.new", (data) => {
-      console.log("New member joined", data);
       dispatch({ type: "ADD_MEMBER_TO_ROOM", payload: data });
     });
 
     // Room Events
     // room joined
     socket.on("room.joined", (data) => {
-			console.log("Joined room", data);
 			const room = {
 				id: data.id,
 				created_at: data.created_at,
@@ -69,13 +64,11 @@ function socketChannel(socket) {
 		// Topic Events
     // receive popular topics
     socket.on("topic.popularTopics", (data) => {
-      console.log("Popular topics:", data);
     });
 
 		// Session Events
     // server letting us know our session is all ready
     socket.on("session.ready", (data) => {
-      console.log("Session ready, hooray!");
       dispatch({ type: "SET_STATUS", payload: "OKAY" });
     });
 

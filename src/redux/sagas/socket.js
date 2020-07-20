@@ -18,7 +18,6 @@ function connect() {
 }
 
 function disconnect(socket) {
-	console.log("Closing socket");
 	socket.close();
 }
 
@@ -27,7 +26,6 @@ export function* openSocket() {
 	// begin upon receiving the OPEN_SOCKET dispatch
 	while(true){
   yield take("OPEN_SOCKET");
-	console.log("opening socket");
   // get our socket from connect
   const socket = yield call(connect);
 

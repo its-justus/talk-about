@@ -19,11 +19,9 @@ class Chat extends React.Component {
   };
 
   componentDidMount = () => {
-    console.log("Chat.componentDidMount");
   };
 
   sendMessage = () => {
-    console.log("sendMessage");
     this.props.dispatch({
       type: "SEND_MESSAGE",
       payload: {

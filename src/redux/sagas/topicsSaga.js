@@ -4,7 +4,6 @@ import axios from 'axios';
 // worker Saga: will be fired on "LOGIN" actions
 function* refreshTopics(action) {
   try {
-		console.log("refreshTopics");
 		const config = {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true,

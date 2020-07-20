@@ -6,8 +6,6 @@ const router = express.Router();
  * GET route template
  */
 router.get('/', (req, res) => {
-	console.log("ROUTE: GET /api/topic/");
-	
 	const queryText = `SELECT topic.* FROM topic
 		JOIN room ON topic.id = room.topic_id
 		GROUP BY topic.id
