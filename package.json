@@ -32,15 +32,16 @@
     "typescript": "^3.9.6"
   },
   "scripts": {
-    "start": "node server/server.js",
+    "start": "node server/server.start.js",
     "client": "react-scripts start",
-    "server": "nodemon --watch server server/server.js",
+    "server": "nodemon --watch server server/server.start.js",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jest --coverage --detectOpenHandles",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "supertest": "^4.0.2"
   },
   "browserslist": [
     ">0.2%",
