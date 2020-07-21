@@ -1,0 +1,15 @@
+4:00 Introduction - name, grew up in fargo, fargo winters can make finding good conversations hard
+
+3:45 sec Story problem- social media is noisy, hard to have a good conversation with someone (reddit angry thread), hard to connect with people (drive by interaction) 
+
+3:30Story Solution - introvert hard time connecting as is, made talkabout to make finding people to talk with easier, make connecting with people easier
+Real time chat app that uses websockets
+
+3:15-00 Demo - login (Ian), autojoin Retrowave, join Pancakes room (my rooms), show add/edit/delete, type join (EDA Demo), logout
+
+2:00 Techs - React, Redux + sagas, Node, Express, Material UI, Passport. Used socket.io for real time comms
+
+1:45 Challenge - Getting sockets w/ redux store was tough, but once figured it worked exactly how I wanted
+
+1:00 One exciting thing - Implementing interaction based relations between users. eg two users interact more likely to be placed in same room should they attempt to join the same topic. like running into the same person at the gym over and over, but talking about all sorts of different things.
+0:00 Thank you all for your time!
