@@ -3,7 +3,7 @@
 
 # TalkAbout
 
-#Archive Notice
+# Archive Notice
 I am archiving this repo as it has been a *long* time since I've made updates. At this point, I would need to start over from scratch, simply on the basis that I've learned so many new technologies and the industry has advanced much further in the 3 years since I completed this app. I'm leaving it up for historical purposes, mainly as a milestone in my journey as a software developer.
 - Ian
 
